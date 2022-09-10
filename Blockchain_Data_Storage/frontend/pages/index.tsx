@@ -3,7 +3,6 @@ import React, { useState } from 'react'
 import Head from 'next/head'
 import { StoreContent } from '../components/StoreContent';
 import styles from '../styles/Storage3.module.css';
-import Link from 'next/link'
 
 const Home: NextPage = () => {
 
