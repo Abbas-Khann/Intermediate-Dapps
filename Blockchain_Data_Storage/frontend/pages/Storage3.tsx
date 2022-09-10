@@ -78,7 +78,7 @@ const Storage3 = () => {
             >
               Built by @Abbas Khan
             </a>
-            <a href="https://github.com/Dhruv-2003/Web3.StorageDemoApp">Github</a>
+            <a href="https://github.com/Abbas-Khann">Github</a>
           </footer>
         </div>
       );
