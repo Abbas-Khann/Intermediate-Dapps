@@ -8,7 +8,7 @@ pragma solidity ^0.8.9;
 -> The contract should consist of a target, minimum contribution and a deadline
 -> 
 -> We will have a manager who will only be able to deposit money from the contract under certain conditions
--> If the deadline and the target do not meet, the contributors can withdraw their money back
+-> If the target does not meet, the contributors can withdraw their money back.
 -> The manager should be able to use the money for the cause once the money is raised in the given time
 -> We should have a function where users can create requests, Another one where users can vote on the requests and for makingPayment once the money is raised
 */
@@ -125,21 +125,3 @@ contract CrowdFunding {
 
 }
 
-contract deployer {
-    CrowdFunding[] public allAddressesArray;
-
-    function createContract(uint256 _target, uint256 _deadline) public {
-        CrowdFunding crowd_funding = new CrowdFunding(_target, _deadline);
-        allAddressesArray.push(crowd_funding);
-    }
-
-    function getContractAddresses() public view returns(CrowdFunding[] memory) {
-        return allAddressesArray;
-    }
-
-    function getRecentlyDeployedContractAddress() public view returns(address) {
-        address recent = address(allAddressesArray[allAddressesArray.length - 1]);
-        return recent;
-    }
-
-}

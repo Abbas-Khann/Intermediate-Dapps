@@ -4,9 +4,9 @@ import { Contract } from "hardhat/internal/hardhat-network/stack-traces/model";
 
 const main = async (): Promise <void> => {
 
-  const deployContractFactory = await ethers.getContractFactory("deployer");
+  const deployContractFactory = await ethers.getContractFactory("CrowdFunding");
 
-  const deployedContract = await deployContractFactory.deploy();
+  const deployedContract = await deployContractFactory.deploy(5, 10800);
 
   await deployedContract.deployed();
 
