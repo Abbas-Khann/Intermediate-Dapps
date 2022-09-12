@@ -63,6 +63,22 @@ contract CrowdFunding {
         return address(this).balance;
     }
 
+    modifier onGoingRequest() {
+        require(
+            block.timestamp > deadline,
+            "The request is still on going you can't get a refund now"
+        );
+        _;
+    }
+
+    modifier notRefundable() {
+        require(
+            target >= raisedAmount,
+            "The target for the crowdFunding was met, So you can't get a refund now!"
+        );
+        _;
+    }
+
     function refund() external {
         require(contributors[msg.sender] == 0, 
         "You're not a contributor, Stop trying to steal money you bitch!");
