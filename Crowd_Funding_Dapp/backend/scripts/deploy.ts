@@ -1,18 +1,19 @@
 import { ethers } from "hardhat";
+import { Contract } from "hardhat/internal/hardhat-network/stack-traces/model";
 
-async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
-  const unlockTime = currentTimestampInSeconds + ONE_YEAR_IN_SECS;
 
-  const lockedAmount = ethers.utils.parseEther("1");
+const main = async (): Promise <void> => {
 
-  const Lock = await ethers.getContractFactory("Lock");
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
+  const deployContractFactory = await ethers.getContractFactory("deployer");
 
-  await lock.deployed();
+  const deployedContract = await deployContractFactory.deploy();
 
-  console.log(`Lock with 1 ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`);
+  await deployedContract.deployed();
+
+  const deployerContractAddress: string = deployedContract.address;
+
+  console.log("Deployer Contract Address", deployerContractAddress);
+
 }
 
 // We recommend this pattern to be able to use async/await everywhere
