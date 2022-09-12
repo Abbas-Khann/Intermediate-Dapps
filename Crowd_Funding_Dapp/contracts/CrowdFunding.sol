@@ -108,3 +108,22 @@ contract CrowdFunding {
     }
 
 }
+
+contract deployer {
+    CrowdFunding[] public allAddressesArray;
+
+    function createContract(uint256 _target, uint256 _deadline) public {
+        CrowdFunding crowd_funding = new CrowdFunding(_target, _deadline);
+        allAddressesArray.push(crowd_funding);
+    }
+
+    function getContractAddresses() public view returns(CrowdFunding[] memory) {
+        return allAddressesArray;
+    }
+
+    function getRecentlyDeployedContractAddress() public view returns(address) {
+        address recent = address(allAddressesArray[allAddressesArray.length - 1]);
+        return recent;
+    }
+
+}
