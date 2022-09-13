@@ -6,7 +6,11 @@ const viewRequests = () => {
   return (
     <div>
         <Navbar />
+        <div className='py-10 flex justify-around'>
         <RequestCard />
+        <RequestCard />
+        <RequestCard />
+        </div>
     </div>
   )
 }
