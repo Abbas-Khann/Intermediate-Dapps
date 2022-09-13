@@ -1,6 +1,3 @@
-import React, { useState } from 'react'
-import Head from 'next/head';
-import { BsLightbulbFill } from 'react-icons/bs';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 const Navbar = () => {
