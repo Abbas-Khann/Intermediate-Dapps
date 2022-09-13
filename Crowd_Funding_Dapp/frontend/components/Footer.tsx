@@ -6,7 +6,7 @@ import { BsGithub } from 'react-icons/bs';
 
 const Footer = () => {
   return (
-    <footer className='bg-gradient-to-r from-[#212b3c] to-[#112B3C] text-[#FCF8E8] px-10 py-6'>
+    <footer className='bg-gradient-to-r from-[#212b3c] to-[#112B3C] text-[#FCF8E8] px-10 py-5'>
         <div className='flex justify-between items-center'>
             <div>
                 <span>Created by </span>
