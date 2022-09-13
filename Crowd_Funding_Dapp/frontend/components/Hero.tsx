@@ -1,5 +1,6 @@
 import heroImage from '../public/heroImage.png';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const Hero = () => {
     return (
@@ -15,9 +16,11 @@ const Hero = () => {
               Get a refund on your money if the project does not proceed after voting
             </p>
             <div>
+              <Link href="/createRequest">
               <button className="border-full py-2 px-5 rounded-lg border-2 border-[#0A043C] hover:bg-[#e7e6f6]">
                 Create Request
               </button>
+              </Link>
             </div>
           </div>
           <div className="w-10/12 md:w-1/3 mx-auto md:mx-0 my-8 order-2 ">

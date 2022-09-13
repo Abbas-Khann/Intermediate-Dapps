@@ -1,4 +1,5 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import Link from 'next/link';
 
 const Navbar = () => {
 
@@ -8,7 +9,9 @@ const Navbar = () => {
         <h1 className='text-xl sm:text-3xl text-[#FCF8E8]'>Crowd Funding</h1>
         <div className='flex flex-auto justify-center items-center px-4 text-white text-sm sm:text-lg'>
         <button className='hover:border-b-2 border-blue-300'>View Requests</button>
+        <Link href="/createRequest">
         <button className='ml-20 hover:border-b-2 border-blue-300'>Create Request</button>
+        </Link>
         </div>
         <ConnectButton />
     </nav>
