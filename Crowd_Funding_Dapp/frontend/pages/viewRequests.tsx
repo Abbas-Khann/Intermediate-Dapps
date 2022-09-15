@@ -4,10 +4,14 @@ import Navbar from '../components/Navbar'
 import RequestCard from '../components/RequestCard'
 import { useProvider, useSigner, useContract } from 'wagmi';
 import { abi, CONTRACT_ADDRESS } from '../constants';
+import { ethers, utils } from 'ethers';
 
 const viewRequests = () => {
 
   const [requestsArray, setRequestsArray] = useState<[]>([])
+  const [target, setTarget] = useState<number>();
+  const [deadline, setDeadline] = useState<number>();
+  const [raisedAmount, setRaisedAmount] = useState<number>();
   
   const provider = useProvider();
     const { data: signer } = useSigner();
@@ -16,6 +20,35 @@ const viewRequests = () => {
         contractInterface: abi,
         signerOrProvider: signer || provider
     });
+
+    const fetchTarget = async (): Promise<void> => {
+      try {
+        const _target: number = await contract.target();
+        // console.log("_target,", _target.toString());
+        const targetAfterConversion: string = _target.toString();
+        const ethValue: string = ethers.utils.formatEther(targetAfterConversion);
+        // console.log("ethValue", ethValue)
+        setTarget(ethValue.toString());
+      } catch (err: any) {
+        console.error(err)
+        alert(err.reason)
+      }
+    }
+
+    const fetchAmountRaised = async (): Promise<void> => {
+      try {
+        const _raisedAmount: number = await contract.raisedAmount();
+        const _amountAfterConversion: string = _raisedAmount.toString();
+        const ethValue: string = ethers.utils.parseEther(_amountAfterConversion);
+        // console.log("ethValue inside raised Amount", ethValue);
+        setRaisedAmount(ethValue.toString());
+      } catch (err: Error) {
+        console.error(err);
+        alert(err.reason);
+      }
+    }
+
+
 
     const fetchReqs = async (_val: number): Promise <void> => {
       try {
@@ -31,7 +64,7 @@ const viewRequests = () => {
     const fetchRequests = async (): Promise <void> => {
       try {
         const amountOfRequests: number = await contract.numOfRequests();
-        console.log(amountOfRequests.toString())
+        // console.log(amountOfRequests.toString())
         const promises: [] = [];
         for(let i: number = 0; i < amountOfRequests; i++) {
           const promisedReq = await fetchReqs(i);
@@ -52,14 +85,17 @@ const viewRequests = () => {
     })
     
     useEffect(() => {
-      fetchRequests()
+      fetchRequests();
+      fetchTarget();
+      fetchAmountRaised();
     }, [])
 
   return (
     <div className=''>
         <Navbar />
         <div className='text-[#112B3C] text-center text-2xl pt-10 pb-4'>
-          <p>Target: 3 Eth</p>
+          <p>Target: {target } Eth</p>
+          <p>Raised Amount: {raisedAmount} Eth</p>
           <p className='border-b-2 '>Deadline: 3 Hours</p>
         </div>
         <div className='py-10 flex justify-around flex-wrap gap-y-20 gap-x-14'>
