@@ -19,3 +19,5 @@ const viewRequests = () => {
 }
 
 export default viewRequests
+// flex justify-around flex-wrap gap-y-20 gap-x-14
+// px-10 grid grid-cols-3 gap-x-14 gap-y-20
