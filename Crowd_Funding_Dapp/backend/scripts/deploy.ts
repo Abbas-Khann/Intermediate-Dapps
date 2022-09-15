@@ -1,5 +1,4 @@
 import { ethers } from "hardhat";
-import { Contract } from "hardhat/internal/hardhat-network/stack-traces/model";
 
 
 const main = async (): Promise <void> => {
@@ -10,9 +9,9 @@ const main = async (): Promise <void> => {
 
   await deployedContract.deployed();
 
-  const deployerContractAddress: string = deployedContract.address;
+  const deployedContractAddress: string = deployedContract.address;
 
-  console.log("Deployer Contract Address", deployerContractAddress);
+  console.log("Deployed Contract Address", deployedContractAddress);
 
 }
 
