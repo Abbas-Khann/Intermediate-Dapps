@@ -48,6 +48,25 @@ const viewRequests = () => {
       }
     }
 
+    const fetchDeadline = async (): Promise<void> => {
+      try {
+        const _deadline: number = await contract.deadline();
+        const _timeAfterConversion: number = _deadline.toNumber();
+        const timestamp = await _timeAfterConversion *  1000;
+        let _date: Date = new Date(timestamp);
+        const data = {
+          Date: _date.toLocaleString()
+        }
+        setDeadline(data.Date);
+        console.log(data)
+      } catch (err: any) {
+        console.error(err);
+        alert(err.reason);
+      }
+    }
+
+    
+
 
 
     const fetchReqs = async (_val: number): Promise <void> => {
@@ -88,6 +107,7 @@ const viewRequests = () => {
       fetchRequests();
       fetchTarget();
       fetchAmountRaised();
+      fetchDeadline()
     }, [])
 
   return (
@@ -96,7 +116,7 @@ const viewRequests = () => {
         <div className='text-[#112B3C] text-center text-2xl pt-10 pb-4'>
           <p>Target: {target } Eth</p>
           <p>Raised Amount: {raisedAmount} Eth</p>
-          <p className='border-b-2 '>Deadline: 3 Hours</p>
+          <p className='border-b-2 '>Deadline: {deadline}</p>
         </div>
         <div className='py-10 flex justify-around flex-wrap gap-y-20 gap-x-14'>
         {renderRequests}
