@@ -110,6 +110,10 @@ const viewRequests = () => {
       fetchDeadline()
     }, [])
 
+    useEffect(() => {
+      fetchAmountRaised()
+    }, [fetchAmountRaised, raisedAmount])
+
   return (
     <div className=''>
         <Navbar />

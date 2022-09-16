@@ -50,16 +50,6 @@ const RequestCard = (props: any) => {
             alert(err.reason);
         }
     }
-    // const sendEtherToRequest = async (): Promise<void> => {
-    //     try {
-    //       /// take the amount to be sent as input
-    //       const _amount = ethers.utils.parseEther(amount);
-    //       const txn: Transaction = await contract.sendEth({ value: _amount });
-    //     } catch (err: Error) {
-    //       console.error(err);
-    //       alert(err.reason);
-    //     }
-    //   };
 
     const payRequest = async (reqNumber: number): Promise <void> => {
         try {
