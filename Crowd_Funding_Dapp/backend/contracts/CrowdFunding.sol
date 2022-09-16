@@ -51,7 +51,7 @@ contract CrowdFunding {
         _;
     }
 
-    function sendEth() external payable passedDeadline {
+    function sendEth() external payable passedDeadline enoughContribution {
         if (contributors[msg.sender] == 0) {
             numOfContributors++;
         }
@@ -73,13 +73,13 @@ contract CrowdFunding {
 
     modifier notRefundable() {
         require(
-            target >= raisedAmount,
+            raisedAmount > target,
             "The target for the crowdFunding was met, So you can't get a refund now!"
         );
         _;
     }
 
-    function refund() external {
+    function refund() external onGoingRequest notRefundable {
         require(contributors[msg.sender] == 0, 
         "You're not a contributor, Stop trying to steal money you bitch!");
         address payable user = payable(msg.sender);
