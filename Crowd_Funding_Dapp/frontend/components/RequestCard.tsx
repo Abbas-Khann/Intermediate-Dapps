@@ -3,7 +3,7 @@ import Image from 'next/image'
 import CardImage from '../public/cardImg.png';
 import { useProvider, useSigner, useContract } from 'wagmi';
 import { abi, CONTRACT_ADDRESS } from '../constants';
-import { Transaction } from 'ethers';
+import { ethers, Transaction, utils } from 'ethers';
 
 const RequestCard = (props: any) => {
 
@@ -39,15 +39,27 @@ const RequestCard = (props: any) => {
         }
     }
 
+    const sendEtherToRequest = async (): Promise<void> => {
+        try {
+           const _amount = ethers.utils.parseEther("0.1");
+           const txn: Transaction = await contract.sendEth({ value: _amount });
+           await txn.wait();    
+        } 
+        catch (err: Error) {
+            console.error(err);
+            alert(err.reason);
+        }
+    }
     // const sendEtherToRequest = async (): Promise<void> => {
     //     try {
-    //        const txn: Transaction = await contract.sendEth()    
-    //     } 
-    //     catch (err: Error) {
-    //         console.error(err);
-    //         alert(err.reason);
+    //       /// take the amount to be sent as input
+    //       const _amount = ethers.utils.parseEther(amount);
+    //       const txn: Transaction = await contract.sendEth({ value: _amount });
+    //     } catch (err: Error) {
+    //       console.error(err);
+    //       alert(err.reason);
     //     }
-    // }
+    //   };
 
     const payRequest = async (reqNumber: number): Promise <void> => {
         try {
@@ -77,7 +89,9 @@ const RequestCard = (props: any) => {
             <Image src={CardImage} height={270} width={290} alt="Card-Image" />
         </div>
         <div className='flex items-center justify-around py-4'>
-            <button className='bg-[#212B3C] border-2 border-white rounded-2xl text-lg px-3 py-0.5'>Send Eth</button>
+            <button className='bg-[#212B3C] border-2 border-white rounded-2xl text-lg px-3 py-0.5'
+            onClick={() => sendEtherToRequest()}
+            >Send Eth</button>
             <button className='bg-[#212B3C] border-2 border-white rounded-2xl text-lg px-3 py-0.5'
             onClick={() => refund()}
             >Refund</button>
