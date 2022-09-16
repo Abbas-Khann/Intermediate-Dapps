@@ -3,6 +3,7 @@ import Image from 'next/image'
 import CardImage from '../public/cardImg.png';
 import { useProvider, useSigner, useContract } from 'wagmi';
 import { abi, CONTRACT_ADDRESS } from '../constants';
+import { Transaction } from 'ethers';
 
 const RequestCard = (props: any) => {
 
@@ -16,12 +17,25 @@ const RequestCard = (props: any) => {
         signerOrProvider: signer || provider
     });
 
+    const voteOnRequest = async (index: number): Promise <void> => {
+        try {
+            const txn: Transaction = await contract.voteRequests(index);
+            await txn.wait();    
+        } 
+        catch (err: Error) {
+            console.error(err);
+            alert(err.reason);
+        }
+    }
+
 
   return (
     <div className='bg-gradient-to-r from-[#212B3C] to-[#112B3C] rounded-2xl max-w-xs max-h-2xl px-7 text-white pb-7'>
         <div className='flex items-center justify-between py-5'>
             <p className='text-lg'>{request.description}</p>
-            <button className='bg-[#212B3C] border-2 border-white rounded-2xl text-lg px-3 py-0.5'>Vote</button>
+            <button className='bg-[#212B3C] border-2 border-white rounded-2xl text-lg px-3 py-0.5'
+            onClick={() => voteOnRequest(idx)}
+            >Vote</button>
         </div>
         <div className='inline'>
         <p>Recipient Address</p>

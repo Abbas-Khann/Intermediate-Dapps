@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar'
 import RequestCard from '../components/RequestCard'
 import { useProvider, useSigner, useContract } from 'wagmi';
 import { abi, CONTRACT_ADDRESS } from '../constants';
-import { ethers, utils } from 'ethers';
+import { ethers } from 'ethers';
 
 const viewRequests = () => {
 
@@ -65,7 +65,7 @@ const viewRequests = () => {
       }
     }
 
-    
+
 
 
 
