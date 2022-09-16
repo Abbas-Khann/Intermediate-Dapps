@@ -39,7 +39,7 @@ const viewRequests = () => {
       try {
         const _raisedAmount: number = await contract.raisedAmount();
         const _amountAfterConversion: string = _raisedAmount.toString();
-        const ethValue: string = ethers.utils.parseEther(_amountAfterConversion);
+        const ethValue: string = ethers.utils.formatEther(_amountAfterConversion);
         // console.log("ethValue inside raised Amount", ethValue);
         setRaisedAmount(ethValue.toString());
       } catch (err: Error) {
@@ -112,7 +112,7 @@ const viewRequests = () => {
 
     useEffect(() => {
       fetchAmountRaised()
-    }, [fetchAmountRaised, raisedAmount])
+    }, [raisedAmount])
 
   return (
     <div className=''>

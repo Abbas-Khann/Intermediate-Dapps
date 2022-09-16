@@ -5,7 +5,7 @@ const main = async (): Promise <void> => {
 
   const deployContractFactory = await ethers.getContractFactory("CrowdFunding");
 
-  const deployedContract = await deployContractFactory.deploy(5, 10800);
+  const deployedContract = await deployContractFactory.deploy(5, 5256000);
 
   await deployedContract.deployed();
 
