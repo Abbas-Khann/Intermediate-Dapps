@@ -28,6 +28,17 @@ const RequestCard = (props: any) => {
         }
     }
 
+    const refund = async (): Promise<void> => {
+        try {
+            const txn: Transaction = await contract.refund();
+            await txn.wait();
+        } 
+        catch (err: Error) {
+            console.error(err);
+            alert(err.reason);
+        }
+    }
+
 
   return (
     <div className='bg-gradient-to-r from-[#212B3C] to-[#112B3C] rounded-2xl max-w-xs max-h-2xl px-7 text-white pb-7'>
@@ -46,7 +57,9 @@ const RequestCard = (props: any) => {
         </div>
         <div className='flex items-center justify-around py-4'>
             <button className='bg-[#212B3C] border-2 border-white rounded-2xl text-lg px-3 py-0.5'>Send Eth</button>
-            <button className='bg-[#212B3C] border-2 border-white rounded-2xl text-lg px-3 py-0.5'>Refund</button>
+            <button className='bg-[#212B3C] border-2 border-white rounded-2xl text-lg px-3 py-0.5'
+            onClick={() => refund()}
+            >Refund</button>
         </div>
         <div className='flex justify-center pt-2'>
             <button className='bg-[#212B3C] border-2 border-white rounded-2xl text-lg px-10 py-0.5'>Make Payment</button>
