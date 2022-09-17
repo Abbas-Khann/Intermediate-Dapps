@@ -42,7 +42,7 @@ const viewRequests = () => {
         const ethValue: string = ethers.utils.formatEther(_amountAfterConversion);
         // console.log("ethValue inside raised Amount", ethValue);
         setRaisedAmount(ethValue.toString());
-      } catch (err: Error) {
+      } catch (err: any) {
         console.error(err);
         alert(err.reason);
       }
@@ -115,7 +115,7 @@ const viewRequests = () => {
     }, [raisedAmount])
 
   return (
-    <div className=''>
+    <div>
         <Navbar />
         <div className='text-[#112B3C] text-center text-2xl pt-10 pb-4'>
           <p>Target: {target } Eth</p>

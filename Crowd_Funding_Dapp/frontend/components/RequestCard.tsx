@@ -19,10 +19,10 @@ const RequestCard = (props: any) => {
 
     const voteOnRequest = async (index: number): Promise <void> => {
         try {
-            const txn: Transaction = await contract.voteRequests(index);
+            const txn = await contract.voteRequests(index);
             await txn.wait();    
         } 
-        catch (err: Error) {
+        catch (err: any) {
             console.error(err);
             alert(err.reason);
         }
@@ -30,10 +30,10 @@ const RequestCard = (props: any) => {
 
     const refund = async (): Promise<void> => {
         try {
-            const txn: Transaction = await contract.refund();
+            const txn = await contract.refund();
             await txn.wait();
         } 
-        catch (err: Error) {
+        catch (err: any) {
             console.error(err);
             alert(err.reason);
         }
@@ -42,10 +42,10 @@ const RequestCard = (props: any) => {
     const sendEtherToRequest = async (): Promise<void> => {
         try {
            const _amount = ethers.utils.parseEther("0.1");
-           const txn: Transaction = await contract.sendEth({ value: _amount });
+           const txn = await contract.sendEth({ value: _amount });
            await txn.wait();    
         } 
-        catch (err: Error) {
+        catch (err: any) {
             console.error(err);
             alert(err.reason);
         }
@@ -53,10 +53,10 @@ const RequestCard = (props: any) => {
 
     const payRequest = async (reqNumber: number): Promise <void> => {
         try {
-            const txn: Transaction = await contract.makePayment(reqNumber);
+            const txn = await contract.makePayment(reqNumber);
             await txn.wait();
         } 
-        catch (err: Error) {
+        catch (err: any) {
             console.error(err);
             alert(err.reason);    
         }

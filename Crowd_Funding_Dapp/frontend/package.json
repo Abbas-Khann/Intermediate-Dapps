@@ -5,9 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "export": "next export",
     "start": "next start",
     "lint": "next lint"
-  },
+ },
   "dependencies": {
     "@rainbow-me/rainbowkit": "^0.5.1",
     "ethers": "^5.7.0",

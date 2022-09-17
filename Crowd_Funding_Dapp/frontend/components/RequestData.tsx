@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState } from 'react'
 import { useSigner, useProvider, useContract } from 'wagmi';
 import { abi, CONTRACT_ADDRESS } from '../constants';
 
@@ -11,8 +11,6 @@ const RequestData = () => {
     contractInterface: abi,
     signerOrProvider: signer || provider
   });
-
-  const inputRef = useRef();
 
   const [formData, setFormData] = useState<object>({
     description: "",
@@ -37,7 +35,6 @@ const RequestData = () => {
           +value.value, 
           value.address);
           await txn.wait();
-          inputRef.current.value = "";
       }
       else {
         alert("Make sure all the input boxes are filled")
@@ -61,7 +58,6 @@ const RequestData = () => {
         className='bg-gradient-to-b from-[#212B3C] to-[#112B3CE5] border-2 border-white rounded-xl px-3 my-3 py-1'
         onChange={handleChange}
         name="address"
-        ref={inputRef}
         />
         <p>Value</p>
         <input 
@@ -69,14 +65,12 @@ const RequestData = () => {
         type="number"
         onChange={handleChange}
         name="value"
-        ref={inputRef}
         />
         <p>Description</p>
         <textarea 
         className='bg-gradient-to-b from-[#212B3C] to-[#112B3CE5] border-2 border-white rounded-xl h-32 px-3 mt-1'
         onChange={handleChange}
         name="description"
-        ref={inputRef}
         />
         <button className="border-full py-2 px-5 rounded-lg border-2 border-[#b4b0d4] hover:bg-[#112B3CE5] mt-5"
         onClick={() => createRequest(formData)}
