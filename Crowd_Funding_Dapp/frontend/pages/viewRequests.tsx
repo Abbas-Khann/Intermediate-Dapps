@@ -65,10 +65,6 @@ const viewRequests = () => {
       }
     }
 
-
-
-
-
     const fetchReqs = async (_val: number): Promise <void> => {
       try {
         const req = await contract.request(_val);
