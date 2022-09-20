@@ -3,7 +3,7 @@ import Image from 'next/image'
 import CardImage from '../public/cardImg.png';
 import { useProvider, useSigner, useContract } from 'wagmi';
 import { abi, CONTRACT_ADDRESS } from '../constants';
-import { ethers, Transaction, utils } from 'ethers';
+import { ethers } from 'ethers';
 
 const RequestCard = (props: any) => {
 

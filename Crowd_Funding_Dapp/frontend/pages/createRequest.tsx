@@ -3,7 +3,7 @@ import Footer from '../components/Footer'
 import Navbar from '../components/Navbar'
 import RequestData from '../components/RequestData'
 
-const createRequest = () => {
+const CreateRequest = () => {
   return (
     <div className=''>
         <Navbar />
@@ -15,4 +15,4 @@ const createRequest = () => {
   )
 }
 
-export default createRequest
+export default CreateRequest

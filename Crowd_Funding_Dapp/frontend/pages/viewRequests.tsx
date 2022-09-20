@@ -1,17 +1,18 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import React, { useEffect, useState } from 'react'
 import Footer from '../components/Footer'
 import Navbar from '../components/Navbar'
 import RequestCard from '../components/RequestCard'
 import { useProvider, useSigner, useContract } from 'wagmi';
 import { abi, CONTRACT_ADDRESS } from '../constants';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 
-const viewRequests = () => {
+const ViewRequests = (): JSX.Element => {
 
-  const [requestsArray, setRequestsArray] = useState<[]>([])
-  const [target, setTarget] = useState<number>();
-  const [deadline, setDeadline] = useState<number>();
-  const [raisedAmount, setRaisedAmount] = useState<number>();
+  const [requestsArray, setRequestsArray] = useState<any[]>([])
+  const [target, setTarget] = useState<string | undefined>();
+  const [deadline, setDeadline] = useState<string | undefined>();
+  const [raisedAmount, setRaisedAmount] = useState<string | undefined>();
   
   const provider = useProvider();
     const { data: signer } = useSigner();
@@ -50,9 +51,10 @@ const viewRequests = () => {
 
     const fetchDeadline = async (): Promise<void> => {
       try {
-        const _deadline: number = await contract.deadline();
-        const _timeAfterConversion: number = _deadline.toNumber();
-        const timestamp = await _timeAfterConversion *  1000;
+        const _deadline: BigNumber = await contract.deadline();
+        const _timeAfterConversion = _deadline.toNumber();
+        console.log(_timeAfterConversion)
+        const timestamp = _timeAfterConversion *  1000;
         let _date: Date = new Date(timestamp);
         const data = {
           Date: _date.toLocaleString()
@@ -80,7 +82,7 @@ const viewRequests = () => {
       try {
         const amountOfRequests: number = await contract.numOfRequests();
         // console.log(amountOfRequests.toString())
-        const promises: [] = [];
+        const promises: any[] = [];
         for(let i: number = 0; i < amountOfRequests; i++) {
           const promisedReq = await fetchReqs(i);
           promises.push(promisedReq);
@@ -126,6 +128,6 @@ const viewRequests = () => {
   )
 }
 
-export default viewRequests
+export default ViewRequests
 // flex justify-around flex-wrap gap-y-20 gap-x-14
 // px-10 grid grid-cols-3 gap-x-14 gap-y-20
