@@ -89,7 +89,7 @@ const Navbar = () => {
                 Home
               </button>
             </Link>
-            <Link href="/About">
+            <Link href="/CreateAppointment">
               <button className="cursor-pointer hover:border-b-2 hover:border-black transition-all text-skin-muted">
                 Create Appointments
               </button>
