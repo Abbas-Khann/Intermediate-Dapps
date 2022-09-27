@@ -15,7 +15,7 @@ const CreateAppointment = () => {
         <h3 className='text-white pb-4 text-2xl py-1'>Enter the Starting time</h3>
         <input 
         type="datetime-local"
-        className='px-9 rounded-lg bg-gradient-to-l from-purple-500 to-indigo-500 text-white text-2xl'
+        className='sm:px-9 px-2 rounded-lg bg-gradient-to-l from-purple-500 to-indigo-500 text-white text-xl sm:text-2xl'
         />
         </div>
     </div>
