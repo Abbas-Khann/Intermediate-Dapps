@@ -40,22 +40,22 @@ const Navbar = () => {
           NFTicket
         </h1> */}
       </div>
-      <ul className="hidden lg:flex justify-between items-center basis-2/5 text-lg">
+      <ul className="hidden lg:flex justify-between items-center basis-2/5 text-lg text-white">
         <Link href="/">
-          <button className="cursor-pointer hover:border-b-2 hover:border-black transition-all text-skin-muted dark:text-skin-darkMuted">
+          <button className="cursor-pointer hover:border-b-2 hover:border-[#E7E0C9] transition-all text-skin-muted dark:text-skin-darkMuted">
             Home
           </button>
         </Link>
         <Link
           href="/CreateAppointment"
-          className="cursor-pointer hover:border-b-2 hover:border-black transition-all text-skin-muted"
+          className="cursor-pointer hover:border-b-2 hover:border-[#E7E0C9] transition-all text-skin-muted"
         >
-          <button className="cursor-pointer hover:border-b-2 hover:border-black transition-all text-skin-muted dark:text-skin-darkMuted">
+          <button className="cursor-pointer hover:border-b-2 hover:border-[#E7E0C9] transition-all text-skin-muted dark:text-skin-darkMuted">
             Create Appointment
           </button>
         </Link>
         <Link href="/ViewAppointment">
-          <button className="cursor-pointer hover:border-b-2 hover:border-black transition-all text-skin-muted dark:text-skin-darkMuted">
+          <button className="cursor-pointer hover:border-b-2 hover:border-[#E7E0C9] transition-all text-skin-muted dark:text-skin-darkMuted">
             View Appointment
           </button>
         </Link>
