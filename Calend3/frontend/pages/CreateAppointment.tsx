@@ -17,6 +17,11 @@ const CreateAppointment = () => {
         type="datetime-local"
         className='sm:px-9 px-2 rounded-lg bg-gradient-to-l from-purple-500 to-indigo-500 text-white text-xl sm:text-2xl'
         />
+        <div className='flex justify-center'>
+        <button
+        className='border-2 border-[#A460ED] text-white mt-8 text-xl py-2.5 rounded-lg w-32'
+        >Create</button>
+        </div>
         </div>
     </div>
     </div>

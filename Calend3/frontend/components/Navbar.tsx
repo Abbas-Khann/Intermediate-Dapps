@@ -54,9 +54,9 @@ const Navbar = () => {
             Create Appointment
           </button>
         </Link>
-        <Link href="/ViewAppointment">
+        <Link href="/ViewAppointments">
           <button className="cursor-pointer hover:border-b-2 hover:border-[#E7E0C9] transition-all text-skin-muted dark:text-skin-darkMuted">
-            View Appointment
+            View Appointments
           </button>
         </Link>
       </ul>
@@ -94,7 +94,7 @@ const Navbar = () => {
                 Create Appointments
               </button>
             </Link>
-            <Link href="/profile">
+            <Link href="/ViewAppointments">
               <button className="cursor-pointer hover:border-b-2 hover:border-black transition-all text-skin-muted">
                 View Appointments
               </button>
