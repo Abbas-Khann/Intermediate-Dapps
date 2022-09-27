@@ -8,12 +8,16 @@ const CreateAppointment = () => {
         <div className='flex flex-col items-center'>
         <h1 className='text-2xl sm:text-3xl md:text-4xl mt-24 text-white border-b-4 border-indigo-500 pb-2'>Create Appointment</h1>
         <input 
-        className='sm:px-16 border-4 border-[#A460ED] rounded-lg py-2 my-10 text-2xl bg-transparent text-white'
+        className='sm:px-12 border-4 border-[#A460ED] rounded-lg py-2 my-10 text-2xl bg-transparent text-white'
         placeholder='Enter Appointment title'
         />
+        <div className='flex flex-col'>
+        <h3 className='text-white pb-4 text-2xl py-1'>Enter the Starting time</h3>
         <input 
-        className=''
+        type="datetime-local"
+        className='px-9 rounded-lg bg-gradient-to-l from-purple-500 to-indigo-500 text-white text-2xl'
         />
+        </div>
     </div>
     </div>
   )
