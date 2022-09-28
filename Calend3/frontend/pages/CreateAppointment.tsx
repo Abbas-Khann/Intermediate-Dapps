@@ -19,7 +19,7 @@ const CreateAppointment = () => {
         />
         <div className='flex justify-center'>
         <button
-        className='border-2 border-[#A460ED] text-white mt-8 text-xl py-2.5 rounded-lg w-32'
+        className='border-2 border-[#A460ED] text-white mt-8 text-xl py-2.5 rounded-lg w-32 hover:bg-indigo-500 hover:transition-all hover:duration-500'
         >Create</button>
         </div>
         </div>
