@@ -1,5 +1,6 @@
 import React from 'react'
 import AppointmentCard from '../components/AppointmentCard'
+import Footer from '../components/Footer'
 import Navbar from '../components/Navbar'
 
 const ViewAppointments = () => {
@@ -10,6 +11,7 @@ const ViewAppointments = () => {
         <AppointmentCard />
         <AppointmentCard />
         </div>
+        <Footer />
     </div>
   )
 }
