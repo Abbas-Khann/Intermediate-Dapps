@@ -11,7 +11,7 @@ const ViewAppointments = () => {
         <AppointmentCard />
         <AppointmentCard />
         </div>
-        <Footer />
+        {/* <Footer /> */}
     </div>
   )
 }
