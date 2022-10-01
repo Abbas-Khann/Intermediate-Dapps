@@ -1,14 +1,25 @@
-import React, { useState } from 'react'
-import Footer from '../components/Footer'
-import Navbar from '../components/Navbar'
+import React, { useState } from 'react';
+import Footer from '../components/Footer';
+import Navbar from '../components/Navbar';
+import { BigNumber, ethers } from 'ethers';
+import { useContract, useSigner, useProvider } from 'wagmi';
+import { CONTRACT_ABI, CONTRACT_ADDRESS } from '../constants';
 
 const CreateAppointment = (): JSX.Element => {
+
+  const provider = useProvider();
+  const {data: signer} = useSigner();
+  const contract = useContract({
+    addressOrName: CONTRACT_ADDRESS,
+    contractInterface: CONTRACT_ABI,
+    signerOrProvider: signer || provider
+  });
+
+
   const [inputData, setInputData] = useState<object>({
     title: "",
     startingTime: 0
   });
-
-  console.log(inputData)
 
   const takeValues = (event: any): void => {
     setInputData((prevState) => {
@@ -17,6 +28,23 @@ const CreateAppointment = (): JSX.Element => {
         [event.target.name]: event.target.value
       }
     })
+  }
+
+  console.log(inputData)
+
+  const createAppointmentCall = async (val:any): Promise <void> => {
+    try {
+      const _appointmentStartingTime: number = Date.parse(val.startingTime);
+      console.log(_appointmentStartingTime, "starting time logged");
+      const _amount: BigNumber = ethers.utils.parseEther("0.1")
+      const txn: any = await contract.createAppointment(val.title, +_appointmentStartingTime,{
+        value: _amount
+      });
+      await txn.wait();
+    } catch (err: any) {
+      console.error(err);
+      alert(err.reason)
+    }
   }
 
   return (
@@ -41,6 +69,7 @@ const CreateAppointment = (): JSX.Element => {
         <div className='flex justify-center'>
         <button
         className='border-2 border-[#A460ED] text-white mt-8 text-xl py-2.5 rounded-lg w-32 hover:bg-indigo-500 hover:transition-all hover:duration-500'
+        onClick={() => createAppointmentCall(inputData)}
         >Create</button>
         </div>
         </div>

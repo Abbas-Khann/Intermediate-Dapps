@@ -1,5 +1,4 @@
 import '../styles/globals.css'
-import { ThirdwebProvider } from '@thirdweb-dev/react';
 import type { AppProps } from 'next/app'
 import '@rainbow-me/rainbowkit/styles.css';
 import {
@@ -10,7 +9,6 @@ import {
 } from '@rainbow-me/rainbowkit';
 import {
   chain,
-  chainId,
   configureChains,
   createClient,
   WagmiConfig,
@@ -39,18 +37,17 @@ const wagmiClient = createClient({
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <ThirdwebProvider desiredChainId={chainId.goerli}>
     <WagmiConfig client={wagmiClient}>
       <RainbowKitProvider chains={chains} modalSize="compact" theme={darkTheme({
         accentColor: '#262A53',
         accentColorForeground: 'white',
         borderRadius: 'small',
-        fontStack: 'rounded', 
+        fontStack: 'rounded',
+
       })}>
       <Component {...pageProps} />
       </RainbowKitProvider>
     </WagmiConfig>
-    </ThirdwebProvider>
   );
 }
 
