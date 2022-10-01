@@ -1,8 +1,39 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useContract, useProvider, useSigner } from "wagmi";
+import { CONTRACT_ABI, CONTRACT_ADDRESS } from "../constants";
 
 const AppointmentCard = (props: any) => {
-
   const { title, attendee, startingTime, endingTime, amountPaid } = props
+
+  const [appointmentStartingTime, setAppointmentStartingTime] = useState<string | undefined>()
+
+
+  const provider = useProvider();
+  const {data: signer} = useSigner();
+  const contract = useContract({
+    addressOrName: CONTRACT_ADDRESS,
+    contractInterface: CONTRACT_ABI,
+    signerOrProvider: signer || provider
+  });
+
+  const getAccurateStartingTime = async (): Promise<void> => {
+    try {
+      let _startingTime: number = await startingTime.toNumber();
+      console.log("starting time: ", _startingTime)
+      const _timestamp: number = _startingTime;
+      const _time: Date = new Date(_timestamp);
+      console.log(_time.toLocaleString())
+      const convertedTime: string = _time.toLocaleString();
+      setAppointmentStartingTime(convertedTime)
+    } catch (err: any) {
+      console.error(err);
+      alert(err.reason);
+    }
+  }
+
+  useEffect(() => {
+    getAccurateStartingTime()
+  }, [])
 
   return (
     <div className="text-black w-10/12 sm:w-8/12 md:w-7/12 lg:w-5/12 px-10 py-4 bg-gradient-to-b from-violet-400 to-fuchsia-400 rounded-md mt-20">
@@ -25,7 +56,7 @@ const AppointmentCard = (props: any) => {
           <h4 className="border-l-2 border-pink-400 mb-2 p-1">
             Starting Time:
           </h4>
-          <h4 className="pl-2 mt-1"> pm</h4>
+          <h4 className="pl-2 mt-1">{appointmentStartingTime}</h4>
         </div>
         <div className="flex">
           <h4 className="border-l-2 border-pink-400 mb-2 p-1">Ending Time:</h4>
