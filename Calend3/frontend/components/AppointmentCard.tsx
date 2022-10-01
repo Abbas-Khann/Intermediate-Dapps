@@ -1,3 +1,4 @@
+import { ethers, utils } from "ethers";
 import React, { useEffect, useState } from "react";
 import { useContract, useProvider, useSigner } from "wagmi";
 import { CONTRACT_ABI, CONTRACT_ADDRESS } from "../constants";
@@ -6,8 +7,8 @@ const AppointmentCard = (props: any) => {
   const { title, attendee, startingTime, endingTime, amountPaid } = props
 
   const [appointmentStartingTime, setAppointmentStartingTime] = useState<string | undefined>();
-  const [appointmentEndingTime, setAppointmentEndingTime] = useState<string | undefined>()
-
+  const [appointmentEndingTime, setAppointmentEndingTime] = useState<string | undefined>();
+  const [paidAmount, setPaidAmount] = useState<string | undefined>();
 
   const provider = useProvider();
   const {data: signer} = useSigner();
@@ -20,10 +21,10 @@ const AppointmentCard = (props: any) => {
   const getAccurateStartingTime = async (): Promise<void> => {
     try {
       const _startingTime: number = await startingTime.toNumber();
-      console.log("starting time: ", _startingTime)
+      // console.log("starting time: ", _startingTime);
       const _timestamp: number = _startingTime;
       const _time: Date = new Date(_timestamp);
-      console.log(_time.toLocaleString())
+      // console.log(_time.toLocaleString());
       const convertedTime: string = _time.toLocaleString();
       setAppointmentStartingTime(convertedTime)
     } catch (err: any) {
@@ -35,7 +36,7 @@ const AppointmentCard = (props: any) => {
   const getAccurateEndingTime = async (): Promise<void> => {
     try {
       const _endingTime: number = await endingTime.toNumber();
-      console.log(_endingTime, "ET")
+      // console.log(_endingTime, "ET")
       const _timestamp: number = _endingTime;
       const _date: Date = new Date(_timestamp);
       const convertedEndingTime: string = _date.toLocaleString();
@@ -47,11 +48,24 @@ const AppointmentCard = (props: any) => {
     }
   }
 
+  const fetchAccurateAmountPaid = async (): Promise<void> => {
+    try {
+      const _amountPaid: string = await amountPaid.toString();
+      const _value: string = ethers.utils.formatEther(_amountPaid);
+      setPaidAmount(_value);
+    } 
+    catch (err: any) {
+      console.error(err);
+      alert(err.reason);  
+    }
+  }
+
 
 
   useEffect(() => {
     getAccurateStartingTime();
     getAccurateEndingTime();
+    fetchAccurateAmountPaid();
   }, [])
 
   return (
@@ -83,7 +97,7 @@ const AppointmentCard = (props: any) => {
         </div>
         <div className="flex">
           <h4 className="border-l-2 border-pink-400 mb-2 p-1">Cost:</h4>
-          <h4 className="pl-16 mt-1">&nbsp; &nbsp; 0.1 Ether</h4>
+          <h4 className="pl-16 mt-1">&nbsp; &nbsp; {paidAmount} Ether</h4>
         </div>
       </div>
       <div className="flex justify-between pt-4">
