@@ -15,7 +15,6 @@ const CreateAppointment = (): JSX.Element => {
     signerOrProvider: signer || provider
   });
 
-
   const [inputData, setInputData] = useState<object>({
     title: "",
     startingTime: 0
