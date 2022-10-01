@@ -15,16 +15,18 @@
     "@headlessui/react": "^1.6.6",
     "@mui/material": "^5.10.6",
     "@rainbow-me/rainbowkit": "^0.5.1",
+    "@thirdweb-dev/react": "^3.1.2",
+    "@thirdweb-dev/sdk": "^3.1.2",
     "axios": "^0.27.2",
     "better-react-carousel": "^1.1.1",
-    "ethers": "^5.7.0",
+    "ethers": "^5.7.1",
     "next": "12.2.5",
     "next-seo": "^5.5.0",
     "notistack": "^2.0.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-icons": "^4.4.0",
-    "wagmi": "^0.6.4"
+    "wagmi": "^0.6.7"
   },
   "devDependencies": {
     "@types/node": "18.7.14",
