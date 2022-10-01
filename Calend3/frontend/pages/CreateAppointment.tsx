@@ -36,7 +36,8 @@ const CreateAppointment = (): JSX.Element => {
       const _appointmentStartingTime: number = Date.parse(val.startingTime);
       console.log(_appointmentStartingTime, "starting time logged");
       const _amount: BigNumber = ethers.utils.parseEther("0.1")
-      const txn: any = await contract.createAppointment(val.title, +_appointmentStartingTime,{
+      const txn: any = await contract.createAppointment(val.title,
+        +_appointmentStartingTime,{
         value: _amount
       });
       await txn.wait();
