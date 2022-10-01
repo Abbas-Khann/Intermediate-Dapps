@@ -5,7 +5,8 @@ import { CONTRACT_ABI, CONTRACT_ADDRESS } from "../constants";
 const AppointmentCard = (props: any) => {
   const { title, attendee, startingTime, endingTime, amountPaid } = props
 
-  const [appointmentStartingTime, setAppointmentStartingTime] = useState<string | undefined>()
+  const [appointmentStartingTime, setAppointmentStartingTime] = useState<string | undefined>();
+  const [appointmentEndingTime, setAppointmentEndingTime] = useState<string | undefined>()
 
 
   const provider = useProvider();
@@ -18,7 +19,7 @@ const AppointmentCard = (props: any) => {
 
   const getAccurateStartingTime = async (): Promise<void> => {
     try {
-      let _startingTime: number = await startingTime.toNumber();
+      const _startingTime: number = await startingTime.toNumber();
       console.log("starting time: ", _startingTime)
       const _timestamp: number = _startingTime;
       const _time: Date = new Date(_timestamp);
@@ -31,8 +32,26 @@ const AppointmentCard = (props: any) => {
     }
   }
 
+  const getAccurateEndingTime = async (): Promise<void> => {
+    try {
+      const _endingTime: number = await endingTime.toNumber();
+      console.log(_endingTime, "ET")
+      const _timestamp: number = _endingTime;
+      const _date: Date = new Date(_timestamp);
+      const convertedEndingTime: string = _date.toLocaleString();
+      setAppointmentEndingTime(convertedEndingTime);
+    } 
+    catch (err:any) {
+      console.error(err);
+      alert(err.reason);
+    }
+  }
+
+
+
   useEffect(() => {
-    getAccurateStartingTime()
+    getAccurateStartingTime();
+    getAccurateEndingTime();
   }, [])
 
   return (
@@ -60,7 +79,7 @@ const AppointmentCard = (props: any) => {
         </div>
         <div className="flex">
           <h4 className="border-l-2 border-pink-400 mb-2 p-1">Ending Time:</h4>
-          <h4 className="pl-4 mt-1">11:00 pm</h4>
+          <h4 className="pl-4 mt-1">{appointmentEndingTime}</h4>
         </div>
         <div className="flex">
           <h4 className="border-l-2 border-pink-400 mb-2 p-1">Cost:</h4>
