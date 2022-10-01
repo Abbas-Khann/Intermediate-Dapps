@@ -4,7 +4,7 @@ import { useContract, useProvider, useSigner } from "wagmi";
 import { CONTRACT_ABI, CONTRACT_ADDRESS } from "../constants";
 
 const AppointmentCard = (props: any) => {
-  const { title, attendee, startingTime, endingTime, amountPaid } = props
+  const { title, attendee, startingTime, endingTime, amountPaid, idx } = props
 
   const [appointmentStartingTime, setAppointmentStartingTime] = useState<string | undefined>();
   const [appointmentEndingTime, setAppointmentEndingTime] = useState<string | undefined>();
@@ -60,7 +60,16 @@ const AppointmentCard = (props: any) => {
     }
   }
 
-
+  const withdrawMoney = async (id: number): Promise<void> => {
+    try {
+      const txn: any = await contract.withdraw(id);
+      await txn.wait();
+    } 
+    catch (err: any) {
+      console.error(err);
+      alert(err.reason);  
+    }
+  }
 
   useEffect(() => {
     getAccurateStartingTime();
@@ -74,7 +83,9 @@ const AppointmentCard = (props: any) => {
         <h3 className="border-l-4 border-black mb-2 p-1 md:text-xl text-white">
           {title}
         </h3>
-        <button className="px-3 py-1 border-2 rounded-md hover:bg-indigo-500 hover:transition-all hover:duration-500 hover:text-white">
+        <button className="px-3 py-1 border-2 rounded-md hover:bg-indigo-500 hover:transition-all hover:duration-500 hover:text-white"
+        onClick={() => withdrawMoney(idx)}
+        >
           Withdraw
         </button>
       </div>
