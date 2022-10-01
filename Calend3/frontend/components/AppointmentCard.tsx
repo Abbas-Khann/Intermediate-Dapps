@@ -82,6 +82,17 @@ const AppointmentCard = (props: any) => {
     }
   }
 
+  const appointmentCompleted = async (id: number): Promise<void> => {
+    try {
+      const txn: any = await contract.appointmentCompleted(id);
+      await txn.wait();
+    } 
+    catch (err: any) {
+      console.error(err);
+      alert(err.reason);  
+    }
+  }
+
   useEffect(() => {
     getAccurateStartingTime();
     getAccurateEndingTime();
@@ -128,11 +139,10 @@ const AppointmentCard = (props: any) => {
         >
           Cancel
         </button>
-        <button className="px-3 py-1 border-2 rounded-md hover:bg-indigo-500 hover:transition-all hover:duration-500 hover:text-white">
+        <button className="px-3 py-1 border-2 rounded-md hover:bg-indigo-500 hover:transition-all hover:duration-500 hover:text-white"
+        onClick={() => appointmentCompleted(idx)}
+        >
           Appointment Completed
-        </button>
-        <button className="px-3 py-1 border-2 rounded-md hover:bg-indigo-500 hover:transition-all hover:duration-500 hover:text-white">
-          Refund
         </button>
       </div>
     </div>
