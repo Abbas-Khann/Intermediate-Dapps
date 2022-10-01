@@ -71,6 +71,17 @@ const AppointmentCard = (props: any) => {
     }
   }
 
+  const cancelAppointment = async (id: number): Promise<void> => {
+    try {
+      const txn: any = await contract.cancelAppointment(id);
+      await txn.wait();
+    } 
+    catch (err: any) {
+       console.error(err)
+       alert(err.reason)  
+    }
+  }
+
   useEffect(() => {
     getAccurateStartingTime();
     getAccurateEndingTime();
@@ -112,7 +123,9 @@ const AppointmentCard = (props: any) => {
         </div>
       </div>
       <div className="flex justify-between pt-4">
-        <button className="px-3 py-1 border-2 rounded-md hover:bg-indigo-500 hover:transition-all hover:duration-500 hover:text-white">
+        <button className="px-3 py-1 border-2 rounded-md hover:bg-indigo-500 hover:transition-all hover:duration-500 hover:text-white"
+        onClick={() => cancelAppointment(idx)}
+        >
           Cancel
         </button>
         <button className="px-3 py-1 border-2 rounded-md hover:bg-indigo-500 hover:transition-all hover:duration-500 hover:text-white">
