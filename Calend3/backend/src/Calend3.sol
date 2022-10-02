@@ -66,7 +66,7 @@ contract Calend3 {
             _title,
             msg.sender,
             block.timestamp + _startingTime,
-            block.timestamp + _startingTime + 1 minutes,
+            block.timestamp + _startingTime + 30 minutes,
             msg.value,
             false,
             false
