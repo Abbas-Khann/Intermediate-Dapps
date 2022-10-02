@@ -65,8 +65,8 @@ contract Calend3 {
         appointments[appointmentId] = Appointment(
             _title,
             msg.sender,
-            block.timestamp + _startingTime,
-            block.timestamp + _startingTime + 30 minutes,
+            _startingTime,
+            _startingTime + 1 hours,
             msg.value,
             false,
             false

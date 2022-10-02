@@ -21,10 +21,10 @@ const AppointmentCard = (props: any) => {
   const getAccurateStartingTime = async (): Promise<void> => {
     try {
       const _startingTime: number = await startingTime.toNumber();
-      // console.log("starting time: ", _startingTime);
+      console.log("starting time: ", _startingTime);
       const _timestamp: number = _startingTime;
       const _time: Date = new Date(_timestamp);
-      // console.log(_time.toLocaleString());
+      console.log(_time.toLocaleString());
       const convertedTime: string = _time.toLocaleString();
       setAppointmentStartingTime(convertedTime)
     } catch (err: any) {
@@ -36,8 +36,9 @@ const AppointmentCard = (props: any) => {
   const getAccurateEndingTime = async (): Promise<void> => {
     try {
       const _endingTime: number = await endingTime.toNumber();
-      // console.log(_endingTime, "ET")
-      const _timestamp: number = _endingTime;
+      console.log(_endingTime, "ET")
+      const _timestamp: number = _endingTime + 3600000;
+      console.log("Ending time converted: ", _timestamp)
       const _date: Date = new Date(_timestamp);
       const convertedEndingTime: string = _date.toLocaleString();
       setAppointmentEndingTime(convertedEndingTime);

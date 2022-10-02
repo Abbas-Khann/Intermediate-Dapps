@@ -48,6 +48,8 @@ const ViewAppointments = (): JSX.Element => {
     }
   }
 
+  // console.log(appointmentsArray[0].startingTime.toString())
+
   const getAppointmentCard = appointmentsArray.map((app, idx) => {
     return (
       <AppointmentCard key={idx} {...app} idx={idx} />
