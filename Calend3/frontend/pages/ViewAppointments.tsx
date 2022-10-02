@@ -66,7 +66,7 @@ const ViewAppointments = (): JSX.Element => {
         <div className='flex justify-around flex-wrap gap-y-10 gap-x-10'>
         {getAppointmentCard}
         </div>
-        {/* <Footer /> */}
+        <Footer />
     </div>
   )
 }
