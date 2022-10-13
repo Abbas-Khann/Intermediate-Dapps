@@ -14,7 +14,7 @@ const Navbar = (props: any) => {
              </style>
         </Head>
         <nav className="flex items-center justify-center px-6 py-4 dark:bg-gradient-to-r from-[#212b3c] to-[#112B3C] dark:text-white shadow-2xl dark:shadow-lg dark:shadow-blue-500/50">
-        <h1 className='text-xl sm:text-3xl'>Vault Dapp</h1>
+        <h1 className='text-xl sm:text-3xl'>Salary Management</h1>
         <div className='flex flex-auto justify-end items-center px-4'>
         {darkMode ? 
         <BsLightbulbFill
