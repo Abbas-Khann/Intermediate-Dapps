@@ -1,5 +1,6 @@
 import '../styles/globals.css'
-import type { AppProps } from 'next/app'
+import type { AppProps } from 'next/app';
+import { IndexProvider } from '../Context/Context';
 import '@rainbow-me/rainbowkit/styles.css';
 import {
   getDefaultWallets,
@@ -34,11 +35,13 @@ const wagmiClient = createClient({
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
+    <IndexProvider>
     <WagmiConfig client={wagmiClient}>
       <RainbowKitProvider chains={chains} modalSize="compact">
       <Component {...pageProps} />
       </RainbowKitProvider>
     </WagmiConfig>
+    </IndexProvider>
   );
 }
 

@@ -2,14 +2,16 @@ import React, { useState } from 'react'
 import Head from 'next/head';
 import { BsLightbulbFill } from 'react-icons/bs';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useGlobalContext } from '../Context/Context';
 
-const Navbar = (props: any): JSX.Element => {
-   const {toggleDarkMode, darkMode} = props 
+const Navbar = (): JSX.Element => {
+   const {toggleDarkMode, darkMode} = useGlobalContext(); 
 
   return (
     <div className={`${darkMode && 'dark'} bg-gradient-to-r from-[#b7c3d3] to-[whitesmoke]`}>
       <Head>
              <style>
+                {/* eslint-disable-next-line react/no-unescaped-entities */}
                @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@600&display=swap');
              </style>
         </Head>
