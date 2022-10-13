@@ -1,14 +1,14 @@
 import Link from 'next/link';
 import React from 'react';
-export default function Sidebar() {
+export default function Sidebar(): JSX.Element {
     return (
       <div>
         <aside
           className="
-          flex justify-between h-[86vh] w-64 fixed text-white inset-x-0 shadow-2xl sm:rounded-2xl sm:p-3 bg-opacity-70 bg-gray-50 dark:bg-gray-800 rounded-lg mx-2 overflow-x-auto mt-3 p-3"
+          flex justify-between h-[86vh] w-64 fixed text-white inset-x-0 shadow-2xl sm:rounded-2xl sm:p-3 bg-opacity-70 dark:bg-gray-800 rounded-lg mx-2 overflow-x-auto mt-3 p-3"
           aria-label="Sidebar"
         >
-          <div className="flex overflow-y-auto py-4 px-3 bg-gray-50 rounded dark:bg-gray-800">
+          <div className="flex overflow-y-auto py-4 px-3 rounded dark:bg-gray-800">
             <ul className="space-y-2">
   
               {/* Add Employee */}

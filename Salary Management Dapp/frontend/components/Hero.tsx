@@ -18,8 +18,8 @@ const Hero = (props: any) => {
 
   return (
     <main className={`${darkMode && "dark"} bg-gradient-to-r from-[#6FB2D2] to-[#D8D2CB]`}> 
-        <Sidebar />
-    <section className='dark:bg-gradient-to-r from-[#121212] to-[#002B5B] dark:text-white h-[90vh]'>
+        <Sidebar darkMode={darkMode} />
+    <section className='dark:bg-gradient-to-r from-[#121212] to-[#002B5B] dark:text-white h-[92vh]'>
       <div className='flex justify-center'>
         <h3 className='text-2xl pt-12 inline-block text-black border-b-4 border-[#7084a0] sm:text-5xl font-bold 
             dark:bg-gradient-to-r dark:bg-clip-text dark:text-transparent 
