@@ -1,8 +1,9 @@
 import React from 'react';
 import Link from "next/link";
 import Sidebar from './Sidebar';
-const Hero = (props: any) => {
-    const {darkMode} = props
+import { useGlobalContext } from '../Context/Context';
+const Hero = () => {
+    const {darkMode} = useGlobalContext();
 
     const renderButton = (): JSX.Element => {
         return(
