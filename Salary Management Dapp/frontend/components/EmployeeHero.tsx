@@ -18,7 +18,7 @@ const Hero = () => {
         
         '>Employees List</h3>
       </div>
-      <div className='flex justify-around flex-wrap gap-x-5 gap-y-14 w-8/12 mr-60 ml-auto pt-10'>
+      <div className='flex justify-around flex-wrap gap-x-5 gap-y-14 w-8/12 mr-52 ml-auto pt-10'>
         <EmployeeCard />
         <EmployeeCard />
         <EmployeeCard />
