@@ -4,27 +4,35 @@ import { useGlobalContext } from '../Context/Context';
 const Hero = () => {
     const {darkMode} = useGlobalContext();
 
-    const renderInternsButton = (): JSX.Element => {
+    const AddFunds = (): JSX.Element => {
         return(
-        <div className='flex flex-col items-center py-2'>
-      <button className='px-4 py-2 my-1 border-2 transition duration-300 motion-safe:animate-bounce ease-out hover:ease-in hover:bg-gradient-to-r from-[#5463FF] to-[#89CFFD] text-3xl rounded hover:text-white mb-3 sm:w-72'
-      >Pay Interns</button>
+        <div className='flex flex-col-reverse justify-start py-2'>
+      <button className='px-4 py-2 mt-5 my-1 border-2 transition duration-300 motion-safe:animate-bounce ease-out hover:ease-in hover:bg-gradient-to-r from-[#5463FF] to-[#89CFFD] text-3xl rounded hover:text-white mb-3 sm:w-72'
+      >Add Funds</button>
+      <input
+          className=' text-black text-2xl text-center border-2 dark:text-white font-bold dark:bg-gradient-to-r dark:bg-clip-text dark:text-transparent 
+          dark:from-red-400 dark:via-purple-500 dark:to-white
+          dark:animate-text sm:w-40'
+          placeholder='Enter Amount'
+          type="number"
+          />
       </div>
         )
     }
-    const renderJuniorsButton = (): JSX.Element => {
+    const showContractAmount = (): JSX.Element => {
         return(
         <div className='flex flex-col items-center py-2'>
       <button className='px-4 py-2 my-1 border-2 transition duration-300 motion-safe:animate-bounce ease-out hover:ease-in hover:bg-gradient-to-r from-[#5463FF] to-[#89CFFD] text-3xl rounded hover:text-white mb-3 sm:w-72'
-      >Pay Juniors</button>
+      >Show Balance</button>
+      <p className='text-3xl'>0 Eth</p>
       </div>
         )
     }
-    const renderSeniorsButton = (): JSX.Element => {
+    const withdrawFunds = (): JSX.Element => {
         return(
         <div className='flex flex-col items-center py-2'>
       <button className='px-4 py-2 my-1 border-2 transition duration-300 motion-safe:animate-bounce ease-out hover:ease-in hover:bg-gradient-to-r from-[#5463FF] to-[#89CFFD] text-3xl rounded hover:text-white mb-3 sm:w-72'
-      >Pay Seniors</button>
+      >Withdraw Funds</button>
       </div>
         )
     }
@@ -43,9 +51,9 @@ const Hero = () => {
       </div>
       <div className='sm:flex sm:items-center sm:justify-center py-16 px-20'>
       <div className=''>
-          {renderInternsButton()}
-          {renderJuniorsButton()}
-          {renderSeniorsButton()}
+          {AddFunds()}
+          {showContractAmount()}
+          {withdrawFunds()}
       </div>
       <div className='mt-5 sm:ml-28'>
       {darkMode ? <img src="https://img.icons8.com/external-flaticons-lineal-color-flat-icons/184/000000/external-salary-job-search-flaticons-lineal-color-flat-icons.png"/> : 

@@ -74,7 +74,7 @@ export default function Sidebar(): JSX.Element {
               </Link>
   
               {/* Contract Details */}
-              <Link href="/funds" passHref>
+              <Link href="/Funds" passHref>
                 <li>
                   <a className="cursor-pointer flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
                     <svg
