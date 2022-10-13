@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { BsLightbulbFill } from 'react-icons/bs';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 
-const Navbar = (props: any) => {
+const Navbar = (props: any): JSX.Element => {
    const {toggleDarkMode, darkMode} = props 
 
   return (
