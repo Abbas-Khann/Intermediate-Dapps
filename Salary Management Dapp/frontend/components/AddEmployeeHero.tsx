@@ -8,7 +8,7 @@ const AddEmployeeHero = () => {
     const renderButton = (): JSX.Element => {
         return(
         <div className='flex flex-col '>
-      <p className='text-2xl sm:text-3xl py-4 text-center'>Enter Employee Details</p>
+      <p className='text-2xl sm:text-3xl py-4'>Enter Employee Details</p>
       <input
           className=' text-black text-2xl border-2 dark:text-white font-bold dark:bg-gradient-to-r dark:bg-clip-text dark:text-transparent 
           dark:from-red-400 dark:via-purple-500 dark:to-white
