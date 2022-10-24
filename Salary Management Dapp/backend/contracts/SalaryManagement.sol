@@ -19,7 +19,7 @@ Contract functionalities and requirements
 
 contract SalaryManagement {
 
-    address private owner;
+    address public owner;
 
     struct Employee {
         string name;

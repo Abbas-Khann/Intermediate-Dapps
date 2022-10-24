@@ -84,7 +84,7 @@ const Hero = () => {
     useEffect(() => {
       showBalance();
       getOwner();
-      checkIfOwner();
+      // checkIfOwner();
     }, [owner, balance]);
 
 
@@ -110,7 +110,7 @@ const Hero = () => {
         <div className='flex flex-col items-center py-2'>
       <button className='px-4 py-2 my-1 border-2 transition duration-300 motion-safe:animate-bounce ease-out hover:ease-in hover:bg-gradient-to-r from-[#5463FF] to-[#89CFFD] text-3xl rounded hover:text-white mb-3 sm:w-72'
       >Show Balance</button>
-      <p className='text-3xl'>{balance} Eth</p>
+      <p className='text-3xl'>{balance.toString()} Eth</p>
       </div>
         )
     }

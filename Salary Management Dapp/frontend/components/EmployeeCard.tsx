@@ -1,5 +1,5 @@
 import React from 'react';
-import CardImage from '../public/Abbas.jpeg';
+import CardImage from '../public/cardimg.png';
 import Image from 'next/image';
 
 const EmployeeCard = () => {
