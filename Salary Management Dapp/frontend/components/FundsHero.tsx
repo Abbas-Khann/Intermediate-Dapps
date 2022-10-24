@@ -1,13 +1,46 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Sidebar from './Sidebar';
 import { useGlobalContext } from '../Context/Context';
+import { useProvider, useSigner, useContract } from 'wagmi';
+import { abi, CONTRACT_ADDRESS } from '../Constants/Index';
+import { ethers } from 'ethers';
+
 const Hero = () => {
     const {darkMode} = useGlobalContext();
+
+    const provider = useProvider();
+    const {data: signer} = useSigner();
+    const contract = useContract({
+      addressOrName: CONTRACT_ADDRESS,
+      contractInterface: abi,
+      signerOrProvider: signer || provider
+    });
+
+    function handleInput(event: any) {
+      setInputValue(event.target.value);
+      console.log(event.target.value);
+    }
+
+    const [inputValue, setInputValue] = useState<number>(0);
+
+    const addFundsToContract = async (value: any): Promise<void> => {
+      try {
+        const txn: any = await contract.addFunds(+value, {
+          value: ethers.utils.parseEther(inputValue.toString())
+        });
+        await txn.wait();
+      } 
+      catch (err: any) {
+        console.error(err.reason);  
+      }
+    }
+
 
     const AddFunds = (): JSX.Element => {
         return(
         <div className='flex flex-col-reverse justify-start py-2'>
       <button className='px-4 py-2 mt-5 my-1 border-2 transition duration-300 motion-safe:animate-bounce ease-out hover:ease-in hover:bg-gradient-to-r from-[#5463FF] to-[#89CFFD] text-3xl rounded hover:text-white mb-3 sm:w-72'
+      onClick={() => addFundsToContract(inputValue)}
       >Add Funds</button>
       <input
           className=' text-black text-2xl text-center border-2 dark:text-white font-bold dark:bg-gradient-to-r dark:bg-clip-text dark:text-transparent 
@@ -15,6 +48,7 @@ const Hero = () => {
           dark:animate-text sm:w-40'
           placeholder='Enter Amount'
           type="number"
+          onChange={handleInput}
           />
       </div>
         )
