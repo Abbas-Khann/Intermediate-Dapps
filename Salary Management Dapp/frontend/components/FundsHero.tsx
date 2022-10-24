@@ -1,13 +1,17 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Sidebar from './Sidebar';
 import { useGlobalContext } from '../Context/Context';
-import { useProvider, useSigner, useContract } from 'wagmi';
+import { useProvider, useSigner, useContract, useAccount } from 'wagmi';
 import { abi, CONTRACT_ADDRESS } from '../Constants/Index';
 import { ethers } from 'ethers';
 
 const Hero = () => {
     const {darkMode} = useGlobalContext();
-
+    const connectedAddress = useAccount({
+      onConnect({ address, connector, isReconnected}) {
+        console.log("Connected" ,{ address, connector, isReconnected})
+      }
+    });
     const provider = useProvider();
     const {data: signer} = useSigner();
     const contract = useContract({
@@ -22,11 +26,13 @@ const Hero = () => {
     }
 
     const [inputValue, setInputValue] = useState<string>('');
+    const [balance, setBalance] = useState<number>(0)
+    const [owner, setOwner] = useState<string | undefined>('');
 
-    const addFundsToContract = async (value: any): Promise<void> => {
+    const addFundsToContract = async (): Promise<void> => {
       try {
-        const txn: any = await contract.addFunds(+value, {
-          value: ethers.utils.parseEther(inputValue.toString())
+        const txn: any = await contract.addFunds( {
+          value: ethers.utils.parseEther(inputValue)
         });
         await txn.wait();
       } 
@@ -35,12 +41,58 @@ const Hero = () => {
       }
     }
 
+    const showBalance = async (): Promise<void> => {
+      try {
+        const _balance: number = await contract.getContractBalance();
+        setBalance(_balance);
+      } 
+      catch (err: any) {
+        console.error(err.reason)
+      }
+    }
+
+    const withdraw = async (): Promise<void> => {
+      try {
+        const txn: any = await contract.withdraw();
+        await txn.wait();
+      } 
+      catch (err: any) {
+        console.error(err);  
+      }
+    }
+    
+    const getOwner = async (): Promise<void> => {
+      try {
+        const _owner: string = await contract.owner();
+        setOwner(_owner);  
+      } 
+      catch (err: any) {
+        console.error(err.reason);
+      }
+    }
+    console.log(owner);
+
+    const checkIfOwner = async (): Promise<JSX.Element> => {
+      if(owner?.toLowerCase() === connectedAddress.address) {
+        return withdrawFunds();
+      }
+      return <div>Not owner</div>
+    }
+
+    console.log(connectedAddress.address)
+
+    useEffect(() => {
+      showBalance();
+      getOwner();
+      checkIfOwner();
+    }, [owner, balance]);
+
 
     const AddFunds = (): JSX.Element => {
         return(
         <div className='flex flex-col-reverse justify-start py-2'>
       <button className='px-4 py-2 mt-5 my-1 border-2 transition duration-300 motion-safe:animate-bounce ease-out hover:ease-in hover:bg-gradient-to-r from-[#5463FF] to-[#89CFFD] text-3xl rounded hover:text-white mb-3 sm:w-72'
-      onClick={() => addFundsToContract(inputValue)}
+      onClick={() => addFundsToContract}
       >Add Funds</button>
       <input
           className=' text-black text-2xl text-center border-2 dark:text-white font-bold dark:bg-gradient-to-r dark:bg-clip-text dark:text-transparent 
@@ -58,7 +110,7 @@ const Hero = () => {
         <div className='flex flex-col items-center py-2'>
       <button className='px-4 py-2 my-1 border-2 transition duration-300 motion-safe:animate-bounce ease-out hover:ease-in hover:bg-gradient-to-r from-[#5463FF] to-[#89CFFD] text-3xl rounded hover:text-white mb-3 sm:w-72'
       >Show Balance</button>
-      <p className='text-3xl'>0 Eth</p>
+      <p className='text-3xl'>{balance} Eth</p>
       </div>
         )
     }
@@ -66,6 +118,7 @@ const Hero = () => {
         return(
         <div className='flex flex-col items-center py-2'>
       <button className='px-4 py-2 my-1 border-2 transition duration-300 motion-safe:animate-bounce ease-out hover:ease-in hover:bg-gradient-to-r from-[#5463FF] to-[#89CFFD] text-3xl rounded hover:text-white mb-3 sm:w-72'
+      onClick={withdraw}
       >Withdraw Funds</button>
       </div>
         )
@@ -87,7 +140,7 @@ const Hero = () => {
       <div className=''>
           {AddFunds()}
           {showContractAmount()}
-          {withdrawFunds()}
+          { owner?.toLowerCase === connectedAddress.address ? withdrawFunds() : null }
       </div>
       <div className='mt-5 sm:ml-28'>
       {darkMode ? <img src="https://img.icons8.com/external-flaticons-lineal-color-flat-icons/184/000000/external-salary-job-search-flaticons-lineal-color-flat-icons.png"/> : 

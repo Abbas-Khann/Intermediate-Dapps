@@ -187,9 +187,9 @@ contract SalaryManagement {
     }
 
     /* <=============== ADD MONEY TO THE SMART CONTRACT ===============> */
-    function addFunds(uint _amount) public payable {
+    function addFunds() public payable {
         require(
-            _amount >= 0.01 ether, 
+            msg.value >= 0.01 ether, 
             "You need to sent more than 0.01 ether to the contract"
         );
     }
