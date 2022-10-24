@@ -3,14 +3,19 @@ import { useGlobalContext } from '../Context/Context';
 import Sidebar from './Sidebar';
 import { useSigner, useProvider, useContract } from 'wagmi';
 import { abi, CONTRACT_ADDRESS } from '../Constants/Index';
-import { readFileSync } from 'fs';
 
 const AddEmployeeHero = () => {
     const {darkMode} = useGlobalContext();
-    const [name, setName] = useState<string>("");
-    const [file, setFile] = useState();
-    const [address, setAddress] = useState<string>();
-    const [position, setPosition] = useState();
+    const [inputData, setInputData] = useState<Object>({
+      name: "",
+      address: "",
+    });
+    const options = [
+      {value: 0, text: 'Intern'},
+      {value: 1, text: 'Junior'},
+      {value: 2, text: 'Senior'}
+    ];
+    const [position, setPosition] = useState(options[0].value);
 
     const provider = useProvider();
     const { data: signer } = useSigner();
@@ -20,6 +25,40 @@ const AddEmployeeHero = () => {
       signerOrProvider: signer || provider
     });
 
+    const handleChange = (e: any): void => {
+      setInputData((prevData) => {
+        return {
+          ...prevData,
+           [e.target.name]: e.target.value
+        };
+      });
+    }
+
+    const handleOptionsChange = (e: any): void => {
+      console.log(e.target.value);
+      setPosition(+e.target.value);
+    }
+ 
+    const enterEmployeeDetails = async (value: any): Promise<void> => {
+      try {
+        if(value.name && value.address) {
+          const tx: any = await contract.addEmployee(
+            value.name,
+            value.address,
+            +position
+            );
+            await tx.wait();
+          }
+      } 
+      catch (err: any) {
+        console.error(err)
+        console.log(err.reason)
+      }
+    }
+    React.useEffect(() => {
+      console.log(inputData) 
+      console.log(position)
+    })
 
     const renderButton = (): JSX.Element => {
         return(
@@ -30,32 +69,28 @@ const AddEmployeeHero = () => {
           dark:from-red-400 dark:via-purple-500 dark:to-white
           dark:animate-text sm:full'
           placeholder='Enter Employee Name'
-          name='details'
-          />
-      <input
-          className=' text-black text-2xl text-center border-2 my-6 dark:text-white font-bold dark:bg-gradient-to-r dark:bg-clip-text dark:text-transparent 
-          dark:from-red-400 dark:via-purple-500 dark:to-white
-          dark:animate-text sm:full'
-          placeholder='Enter Name'
-          type="file"
-          name='file'
+          name='name'
+          onChange={handleChange}
           />
       <input
           className=' text-black text-2xl border-2 dark:text-white font-bold dark:bg-gradient-to-r dark:bg-clip-text dark:text-transparent 
           dark:from-red-400 dark:via-purple-500 dark:to-white
-          dark:animate-text sm:full'
+          dark:animate-text sm:full my-4'
           placeholder='Enter Address'
           name='address'
+          onChange={handleChange}
           />
-      <p className='text-2xl sm:text-3xl py-4'>Employee Position</p>
-      <select className='text-black'
-      name='position'
-      >
-        <option>Intern</option>
-        <option>Junior</option>
-        <option>Senior</option>
+        <p className='text-2xl sm:text-3xl pb-4'>Employee Position</p>
+        <select className='text-black'
+        value={position}
+        onChange={handleOptionsChange}
+        >
+          {options.map((option) => {
+            return <option key={option.value} value={option.value}>{option.text}</option>
+          })}
       </select>
       <button className='px-4 py-2 mt-8 border-2 transition duration-300 ease-out hover:ease-in hover:bg-gradient-to-r from-[#5463FF] to-[#89CFFD] text-3xl rounded hover:text-white mb-3 sm:w-72'
+      onClick={() => enterEmployeeDetails(inputData)}
       >Submit</button>
       </div>
         )
