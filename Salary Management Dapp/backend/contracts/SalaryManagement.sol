@@ -47,10 +47,10 @@ contract SalaryManagement {
         _;
     }
 
-    ///  Index always passed in the functions to find the employee is the employeeId which is from the common mapping we have created 
-    ///  The intern, junior or senior address array is just used when we want all the interns collectively 
-    /// Otherwise we are not using this array anywhere to check that particular exsists or not
-    /// That will be checked from the Employee struct from the employee position
+    ///  index always passed in the functions to find the employee is the employeeId which is from the common mapping we have created 
+    ///  the intern, junior or senior address array is just used when we want all the interns collectively 
+    /// otherwise we are not using this array anywhere to check that particular exsists or not
+    /// that will be checked from the Employee struct from the employee position
 
     /// employee is the main mapping which consists of all the info for employee , we always use this to extract the information
 
