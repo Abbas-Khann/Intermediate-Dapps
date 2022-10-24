@@ -21,7 +21,7 @@ const Hero = () => {
       console.log(event.target.value);
     }
 
-    const [inputValue, setInputValue] = useState<number>(0);
+    const [inputValue, setInputValue] = useState<string>('');
 
     const addFundsToContract = async (value: any): Promise<void> => {
       try {
