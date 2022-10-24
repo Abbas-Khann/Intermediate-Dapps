@@ -1,13 +1,63 @@
 import React from 'react';
 import Sidebar from './Sidebar';
 import { useGlobalContext } from '../Context/Context';
+import { useSigner, useProvider, useContract } from 'wagmi';
+import { abi, CONTRACT_ADDRESS } from '../Constants/Index';
+import { BigNumber, ContractFactory, ethers } from 'ethers';
 const Hero = () => {
     const {darkMode} = useGlobalContext();
+    const provider = useProvider();
+    const {data: signer} = useSigner();
+    const contract = useContract({
+      addressOrName: CONTRACT_ADDRESS,
+      contractInterface: abi,
+      signerOrProvider: signer || provider
+    });
+
+    const payInterns = async (): Promise<void> => {
+      try {
+        const _amount: BigNumber = ethers.utils.parseEther("0.03");
+        const txn: any = await contract.payAllInterns({
+        value: _amount
+        }
+        );
+        await txn.wait();
+      } 
+      catch (err: any) {
+        console.error(err);  
+      }
+    }
+
+    const payJuniors = async (): Promise<void> => {
+      try {
+        const txn: any = await contract.payAllJuniors({
+          value: ethers.utils.parseEther("0.02")
+      });
+        await txn.wait();
+        } 
+      catch (err: any) {
+        console.error(err.reason);  
+      }
+    }
+
+    const paySeniors = async (): Promise<void> => {
+      try {
+        const txn: any = await contract.payAllSeniors({
+          value: ethers.utils.parseEther("0.03")
+      })
+      await txn.wait();
+      } 
+      catch (err: any) {
+        console.error(err.reason);  
+      }
+    }
+
 
     const renderInternsButton = (): JSX.Element => {
         return(
         <div className='flex flex-col items-center py-2'>
       <button className='px-4 py-2 my-1 border-2 transition duration-300 motion-safe:animate-bounce ease-out hover:ease-in hover:bg-gradient-to-r from-[#5463FF] to-[#89CFFD] text-3xl rounded hover:text-white mb-3 sm:w-72'
+      onClick={payInterns}
       >Pay Interns</button>
       </div>
         )
@@ -16,6 +66,7 @@ const Hero = () => {
         return(
         <div className='flex flex-col items-center py-2'>
       <button className='px-4 py-2 my-1 border-2 transition duration-300 motion-safe:animate-bounce ease-out hover:ease-in hover:bg-gradient-to-r from-[#5463FF] to-[#89CFFD] text-3xl rounded hover:text-white mb-3 sm:w-72'
+      onClick={payJuniors}
       >Pay Juniors</button>
       </div>
         )
@@ -24,6 +75,7 @@ const Hero = () => {
         return(
         <div className='flex flex-col items-center py-2'>
       <button className='px-4 py-2 my-1 border-2 transition duration-300 motion-safe:animate-bounce ease-out hover:ease-in hover:bg-gradient-to-r from-[#5463FF] to-[#89CFFD] text-3xl rounded hover:text-white mb-3 sm:w-72'
+      onClick={paySeniors}
       >Pay Seniors</button>
       </div>
         )
