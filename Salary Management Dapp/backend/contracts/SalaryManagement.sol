@@ -23,7 +23,6 @@ contract SalaryManagement {
 
     struct Employee {
         string name;
-        string image;
         address employeeAddress;
         Position employeePosition;
     }
@@ -57,7 +56,6 @@ contract SalaryManagement {
     /* <=============== ADD EMPLOYEE ===============> */
     function addEmployee(
         string memory _name,
-        string memory _image,
         address _employeeAddress,
         Position _employeePosition
     ) public onlyOwner {
@@ -74,7 +72,6 @@ contract SalaryManagement {
         }
         employee[employeeId] = Employee(
             _name,
-            _image,
             _employeeAddress,
             _employeePosition
         );

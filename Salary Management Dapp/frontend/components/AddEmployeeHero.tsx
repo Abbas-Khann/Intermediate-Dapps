@@ -1,9 +1,25 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { useGlobalContext } from '../Context/Context';
 import Sidebar from './Sidebar';
+import { useSigner, useProvider, useContract } from 'wagmi';
+import { abi, CONTRACT_ADDRESS } from '../Constants/Index';
+import { readFileSync } from 'fs';
 
 const AddEmployeeHero = () => {
     const {darkMode} = useGlobalContext();
+    const [name, setName] = useState<string>("");
+    const [file, setFile] = useState();
+    const [address, setAddress] = useState<string>();
+    const [position, setPosition] = useState();
+
+    const provider = useProvider();
+    const { data: signer } = useSigner();
+    const contract = useContract({
+      addressOrName: CONTRACT_ADDRESS,
+      contractInterface: abi,
+      signerOrProvider: signer || provider
+    });
+
 
     const renderButton = (): JSX.Element => {
         return(
@@ -14,6 +30,7 @@ const AddEmployeeHero = () => {
           dark:from-red-400 dark:via-purple-500 dark:to-white
           dark:animate-text sm:full'
           placeholder='Enter Employee Name'
+          name='details'
           />
       <input
           className=' text-black text-2xl text-center border-2 my-6 dark:text-white font-bold dark:bg-gradient-to-r dark:bg-clip-text dark:text-transparent 
@@ -21,15 +38,19 @@ const AddEmployeeHero = () => {
           dark:animate-text sm:full'
           placeholder='Enter Name'
           type="file"
+          name='file'
           />
       <input
           className=' text-black text-2xl border-2 dark:text-white font-bold dark:bg-gradient-to-r dark:bg-clip-text dark:text-transparent 
           dark:from-red-400 dark:via-purple-500 dark:to-white
           dark:animate-text sm:full'
           placeholder='Enter Address'
+          name='address'
           />
       <p className='text-2xl sm:text-3xl py-4'>Employee Position</p>
-      <select className='text-black'>
+      <select className='text-black'
+      name='position'
+      >
         <option>Intern</option>
         <option>Junior</option>
         <option>Senior</option>
