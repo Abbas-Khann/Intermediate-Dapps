@@ -9,7 +9,7 @@ const Hero = () => {
     const {darkMode} = useGlobalContext();
     const connectedAddress = useAccount({
       onConnect({ address, connector, isReconnected}) {
-        console.log("Connected" ,{ address, connector, isReconnected})
+        // console.log("Connected" ,{ address, connector, isReconnected})
       }
     });
     const provider = useProvider();
@@ -22,12 +22,13 @@ const Hero = () => {
 
     function handleInput(event: any) {
       setInputValue(event.target.value);
-      console.log(event.target.value);
+      // console.log(event.target.value);
     }
 
     const [inputValue, setInputValue] = useState<string>('');
     const [balance, setBalance] = useState<number>(0)
     const [owner, setOwner] = useState<string | undefined>('');
+    const [isOwner, setIsOwner] = useState<boolean>(false);
 
     const addFundsToContract = async (): Promise<void> => {
       try {
@@ -70,21 +71,23 @@ const Hero = () => {
         console.error(err.reason);
       }
     }
-    console.log(owner);
 
-    const checkIfOwner = async (): Promise<JSX.Element> => {
-      if(owner?.toLowerCase() === connectedAddress.address) {
-        return withdrawFunds();
+    const checkIfOwner = async (): Promise<void> => {
+      if(owner?.toLowerCase() === connectedAddress.address?.toLowerCase()) {
+        setIsOwner(true);
       }
-      return <div>Not owner</div>
+      else {
+        return;
+      }
     }
 
-    console.log(connectedAddress.address)
+    console.log("Connected address",connectedAddress.address?.toLowerCase())
+    console.log("owner", owner?.toLowerCase())
 
     useEffect(() => {
       showBalance();
       getOwner();
-      // checkIfOwner();
+      checkIfOwner();
     }, [owner, balance]);
 
 
@@ -140,7 +143,8 @@ const Hero = () => {
       <div className=''>
           {AddFunds()}
           {showContractAmount()}
-          { owner?.toLowerCase === connectedAddress.address ? withdrawFunds() : null }
+          { isOwner ? withdrawFunds() : null } 
+          {/* supposed to be null if not owner */}
       </div>
       <div className='mt-5 sm:ml-28'>
       {darkMode ? <img src="https://img.icons8.com/external-flaticons-lineal-color-flat-icons/184/000000/external-salary-job-search-flaticons-lineal-color-flat-icons.png"/> : 

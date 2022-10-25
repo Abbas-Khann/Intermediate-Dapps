@@ -2,8 +2,11 @@ import React from 'react';
 import Sidebar from './Sidebar';
 import { useGlobalContext } from '../Context/Context';
 import EmployeeCard from './EmployeeCard';
+import { useProvider, useSigner, useContract } from 'wagmi';
+
 const Hero = () => {
     const {darkMode} = useGlobalContext();
+    
 
   return (
     <main className={`${darkMode && "dark"} bg-gradient-to-r from-[#6FB2D2] to-[#D8D2CB]`}> 
@@ -18,9 +21,7 @@ const Hero = () => {
         '>Employees List</h3>
       </div>
       <div className='flex justify-around flex-wrap gap-x-5 gap-y-14 w-8/12 mr-52 ml-auto pt-10'>
-        <EmployeeCard />
-        <EmployeeCard />
-        <EmployeeCard />
+
       </div>
     </section>
     </main>
