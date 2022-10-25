@@ -1,4 +1,4 @@
-export const CONTRACT_ADDRESS: string = "0x818B56D53dD213a8B226811916EE5036b2adE148";
+export const CONTRACT_ADDRESS: string = "0xeC506CAd67fC36A540412C13a2f979C6627daaa3";
 export const abi = [
   {
     "type": "constructor",
@@ -33,13 +33,7 @@ export const abi = [
   {
     "type": "function",
     "name": "addFunds",
-    "inputs": [
-      {
-        "type": "uint256",
-        "name": "_amount",
-        "internalType": "uint256"
-      }
-    ],
+    "inputs": [],
     "outputs": [],
     "stateMutability": "payable"
   },
@@ -285,6 +279,19 @@ export const abi = [
         "internalType": "uint256"
       }
     ],
+    "outputs": [
+      {
+        "type": "address",
+        "name": "",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "owner",
+    "inputs": [],
     "outputs": [
       {
         "type": "address",
