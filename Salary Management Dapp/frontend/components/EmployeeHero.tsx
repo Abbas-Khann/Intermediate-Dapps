@@ -29,9 +29,29 @@ const Hero = () => {
 
     console.log(id)
 
-    const fetchMapping = async (): Promise<void> => {
+    const fetchMapping = async (val: number): Promise<void> => {
       try {
-        const data: any = await contract.employee()
+        const data: any = await contract.employee();
+        await data;
+        return data;
+      } 
+      catch (err: any) {
+        console.error(err.reason);  
+      }
+    }
+
+    const fetchEmployees = async (): Promise<void> => {
+      try {
+        const _employeeId = await contract.employeeId();
+        console.log("_employeeId", _employeeId.toNumber());
+        const promises: any[] = [];
+        for(let i: number = 0; i < _employeeId.toNumber(); i++) {
+          const promisesEmployees = await fetchMapping(i);
+          promises.push(promisesEmployees);
+        }
+        const proms = await Promise.all(promises);
+        console.table("proms", proms);
+        setCardData(proms);
       } 
       catch (err: any) {
         console.error(err.reason);  
@@ -40,7 +60,12 @@ const Hero = () => {
 
     useEffect(() => {
       fetchId();
-    }, [id])
+      fetchEmployees();
+    }, [id, cardData])
+
+    const renderEmployeeCard: JSX.Element[] = cardData.map((employee: any, idx) => {
+      return <EmployeeCard key={idx} employee={employee} idx={idx}/>
+    })
 
   return (
     <main className={`${darkMode && "dark"} bg-gradient-to-r from-[#6FB2D2] to-[#D8D2CB]`}> 
@@ -55,7 +80,7 @@ const Hero = () => {
         '>Employees List</h3>
       </div>
       <div className='flex justify-around flex-wrap gap-x-5 gap-y-14 w-8/12 mr-52 ml-auto pt-10'>
-
+          {renderEmployeeCard}
       </div>
     </section>
     </main>
