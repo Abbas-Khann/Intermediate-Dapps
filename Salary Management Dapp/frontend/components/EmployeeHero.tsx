@@ -1,12 +1,46 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import Sidebar from './Sidebar';
 import { useGlobalContext } from '../Context/Context';
 import EmployeeCard from './EmployeeCard';
 import { useProvider, useSigner, useContract } from 'wagmi';
+import { abi, CONTRACT_ADDRESS } from '../Constants/Index';
 
 const Hero = () => {
+    const [cardData, setCardData] = useState<any[]>([]);
+    const [id, setId] = useState<number>(0)
     const {darkMode} = useGlobalContext();
-    
+    const provider = useProvider();
+    const {data: signer} = useSigner();
+    const contract = useContract({
+      addressOrName: CONTRACT_ADDRESS,
+      contractInterface: abi,
+      signerOrProvider: signer || provider
+    });
+
+    const fetchId = async (): Promise<void> => {
+      try {
+        const _id = await contract.employeeId;
+        setId(_id.toNumber());
+      } 
+      catch (err: any) {
+        console.error(err.reason);
+      }
+    }
+
+    console.log(id)
+
+    const fetchMapping = async (): Promise<void> => {
+      try {
+        const data: any = await contract.employee()
+      } 
+      catch (err: any) {
+        console.error(err.reason);  
+      }
+    }
+
+    useEffect(() => {
+      fetchId();
+    }, [id])
 
   return (
     <main className={`${darkMode && "dark"} bg-gradient-to-r from-[#6FB2D2] to-[#D8D2CB]`}> 
