@@ -1,6 +1,6 @@
 import React, { useState, useContext, createContext } from "react";
 
-export const IndexContext = createContext<any>();
+export const IndexContext = createContext<any>({});
 
 const IndexProvider = ({ children }: any) => {
   // States here
