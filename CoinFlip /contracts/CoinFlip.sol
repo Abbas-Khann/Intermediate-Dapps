@@ -35,7 +35,7 @@ contract CoinFlip is VRFV2WrapperConsumerBase{
 
     mapping (uint256 => CoinFlipStatus) public statuses;
 
-    constructor() VRFV2WrapperConsumerBase(linkToken, VRFWrapper) {
+    constructor() payable VRFV2WrapperConsumerBase(linkToken, VRFWrapper) {
         owner = msg.sender;
     }
 
