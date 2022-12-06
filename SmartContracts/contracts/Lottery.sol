@@ -155,5 +155,4 @@ contract Lottery is VRFConsumerBaseV2, ConfirmedOwner {
             requestRandomWords();
         }
     }
-
 }
