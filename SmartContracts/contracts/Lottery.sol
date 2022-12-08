@@ -56,7 +56,7 @@ contract Lottery is VRFConsumerBaseV2, ConfirmedOwner {
         s_subscriptionId = subscriptionId;
     }
 
-    function requestRandomWords() 
+    function requestRandomWords()
     public  
     onlyOwner
     returns (uint256 requestId)
