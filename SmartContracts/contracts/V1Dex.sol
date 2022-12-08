@@ -69,7 +69,6 @@ contract DEX is ERC20 {
     }
 
     // Returns the amount Eth/ tokens that would be returned to the user in the swap
-
     function getAmountOfTokens(
         uint256 inputAmount,
         uint256 inputReserve,
