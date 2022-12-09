@@ -27,7 +27,6 @@ contract Lottery is VRFConsumerBaseV2, ConfirmedOwner {
 
     bool public started;
     address[] public players;
-    
     uint256 public gameId;
     uint8 maxPlayers;
     uint256 entryFee;
