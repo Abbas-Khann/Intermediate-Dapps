@@ -20,7 +20,6 @@ contract DEX is ERC20 {
     }
 
     // adding liquidity to exchange
-
     function addLiquidity(uint256 _amount) public payable returns (uint256) {
         uint256 _liquidity;
         uint256 balanceInEth = address(this).balance;
@@ -52,7 +51,6 @@ contract DEX is ERC20 {
     }
 
     // Returns the amount of Eth/tokens that would be returned to the user in the swap
-
     function removeLiquidity(uint256 _amount) public returns (uint256, uint256) {
         require(
             _amount > 0, "Amount should be greater than zero"
