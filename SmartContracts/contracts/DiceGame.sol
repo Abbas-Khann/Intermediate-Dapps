@@ -99,7 +99,12 @@ contract DiceGame {
         _;
     }
 
-    function rollDicePlayerOne() public onlyPlayerOne gameOngoing returns(uint256) {
+    function rollDicePlayerOne() 
+    public 
+    onlyPlayerOne 
+    gameOngoing 
+    returns(uint256) 
+    {
         require(playerOnePoints < winningPoints && playerTwoPoints < winningPoints, "POINTS_EXCEEDED!!!");
         require(playerTwoMove, "Wait for player Two to finish his move");
         uint256 randomNumber = generateRandomNumber();
@@ -111,7 +116,12 @@ contract DiceGame {
         return playerOnePoints;
     }
 
-    function rollDicePlayerTwo() public onlyPlayerTwo gameOngoing returns(uint256) {
+    function rollDicePlayerTwo() 
+    public 
+    onlyPlayerTwo 
+    gameOngoing 
+    returns(uint256) 
+    {
         require(playerOnePoints < winningPoints && playerTwoPoints < winningPoints, "POINTS_EXCEEDED!!!");
         require(playerOneMove, "Wait for player One to finish his move");
         uint256 randomNumber = generateRandomNumber();
@@ -123,8 +133,31 @@ contract DiceGame {
         return playerTwoPoints;
     }
 
-    function rewardWinner() external returns(address) {
+    function rollDiceFirstTime()
+    public
+    onlyPlayerOne
+    gameOngoing
+    returns(uint256)
+    {
+        require(playerMoves[msg.sender] == 0, "Function can only be called once!");
+        require(playerOnePoints < winningPoints && playerTwoPoints < winningPoints, "POINTS_EXCEEDED!!!");
+        uint256 randomNumber = generateRandomNumber();
+        playerOneNumbers.push(randomNumber);
+        playerOnePoints = addPlayerOnePoints();
+        playerMoves[msg.sender] += 1;
+        playerOneMove = true;
+        playerTwoMove = false;
+        return playerOnePoints;
+    }
+
+    // only reward when the time has exceeded, only reward when the time has exceeded and there is a winner i have now
+    function rewardWinner() 
+    external 
+    returns(address) 
+    {
         address winner;
+        require(block.timestamp > gameTime, "TIME_LIMIT_NOT_EXCEEDED");
+        require(winner != address(0), "NO_WINNER_YET");
         uint256 _amount = rewardWinnersPercentage();
         if(playerOnePoints >= winningPoints) {
             winner = players[0];
@@ -136,8 +169,14 @@ contract DiceGame {
             (bool sent, ) = winner.call{ value: _amount }("");
             require(sent, "FAILED TO REWARD WINNER 2");
         }
+        require(winner == players[0] || winner == players[1], "NO_WINNER_TO_REWARD");
         return winner;
     }
+
+    // Function for restarting the game to make the contract reusable
+
+
+    // @dev 
 
     function rewardWinnersPercentage() public view returns(uint256) {
         uint256 amount = (address(this).balance * 90) / 100;
@@ -181,10 +220,10 @@ contract DiceGame {
     }
 
     // this should fetch the balance of the smart contract
-    function getContractBalance() 
+    function getContractBalance()
     public
     view
-    returns (uint256) 
+    returns (uint256)
     {
         return address(this).balance;
     }
