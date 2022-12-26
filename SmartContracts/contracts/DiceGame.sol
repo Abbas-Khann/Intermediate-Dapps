@@ -42,16 +42,38 @@ contract DiceGame {
         }
         _;
     }
-    
-    function joinGame() public payable alreadyJoined gameOngoing {
-        require(players.length < 3, "ONLY_TWO_PLAYERS_CAN_PLAY");
+
+    modifier notEnoughEth() {
         if (msg.value < 0.1 ether) {
             revert NOT_ENOUGH_ETH();
         }
-        if (players.length == 0) {
-            startGameTime();
-            rollDicePlayerOne();
+        _;
+    }
+
+    function startGameTime() internal {
+        gameTime = block.timestamp + 20 minutes;
+        gameId++;
+    }
+
+    modifier onlyWhenNotStarted() {
+        if(gameTime != 0) {
+            revert("GAME_ALREADY_STARTED");
         }
+        _;
+    }
+
+    function startGame() public onlyWhenNotStarted {
+        if (players.length == 0) {
+        startGameTime();
+        }
+    }
+    
+    function joinGame() public payable alreadyJoined notEnoughEth {
+        require(players.length < 3, "ONLY_TWO_PLAYERS_CAN_PLAY");
+        if (block.timestamp > gameTime) {
+            revert("GAME_TIME_LIMIT_HAS_EXCEEDED");
+        }
+        require(gameTime > 0, "GAME_NOT_STARTED");
         hasJoined[msg.sender] = true;
         players.push(msg.sender);
     }
@@ -78,7 +100,7 @@ contract DiceGame {
     }
 
     function rollDicePlayerOne() public onlyPlayerOne gameOngoing returns(uint256) {
-        require(playerOnePoints < winningPoints && playerTwoPoints < winningPoints,         "POINTS_EXCEEDED!!!");
+        require(playerOnePoints < winningPoints && playerTwoPoints < winningPoints, "POINTS_EXCEEDED!!!");
         require(playerTwoMove, "Wait for player Two to finish his move");
         uint256 randomNumber = generateRandomNumber();
         playerOneNumbers.push(randomNumber);
@@ -90,7 +112,7 @@ contract DiceGame {
     }
 
     function rollDicePlayerTwo() public onlyPlayerTwo gameOngoing returns(uint256) {
-        require(playerOnePoints < winningPoints && playerTwoPoints < winningPoints,         "POINTS_EXCEEDED!!!");
+        require(playerOnePoints < winningPoints && playerTwoPoints < winningPoints, "POINTS_EXCEEDED!!!");
         require(playerOneMove, "Wait for player One to finish his move");
         uint256 randomNumber = generateRandomNumber();
         playerTwoNumbers.push(randomNumber);
@@ -142,11 +164,6 @@ contract DiceGame {
     function generateRandomNumber() internal view returns(uint256) {
         uint256 rand = uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty, msg.sender))) % 6 + 1;
         return rand;
-    }
-
-    function startGameTime() internal {
-        gameTime = block.timestamp + 20 minutes;
-        gameId++;
     }
 
     modifier onlyOwner() {
