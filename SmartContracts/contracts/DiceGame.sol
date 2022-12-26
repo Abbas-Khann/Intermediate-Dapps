@@ -9,7 +9,6 @@ contract DiceGame {
     error ONLY_PLAYERS_CAN_ROLL_DICE();
 
     address payable public immutable owner;
-    uint256 public maxPlayers;
     address[] public players;
     uint256 public gameTime;
     uint256 gameId;
@@ -20,13 +19,14 @@ contract DiceGame {
     uint256 playerOnePoints;
     uint256 playerTwoPoints;
     uint256 winningPoints;
+    bool public winnerRewarded;
 
     mapping(address => bool) public hasJoined;
     mapping(address => uint256) public playerMoves;
 
     constructor(uint256 _winningPoints) payable {
         owner = payable(msg.sender);
-        winningPoints = _winningPoints;
+        _winningPoints = winningPoints;
     }
 
     modifier alreadyJoined() {
@@ -64,7 +64,7 @@ contract DiceGame {
 
     function startGame() public onlyWhenNotStarted {
         if (players.length == 0) {
-        startGameTime();
+            startGameTime();
         }
     }
     
@@ -100,12 +100,21 @@ contract DiceGame {
     }
 
     function rollDicePlayerOne() 
-    public 
-    onlyPlayerOne 
-    gameOngoing 
-    returns(uint256) 
+    public
+    onlyPlayerOne
+    gameOngoing
+    returns(uint256)
     {
         require(playerOnePoints < winningPoints && playerTwoPoints < winningPoints, "POINTS_EXCEEDED!!!");
+        if (playerMoves[msg.sender] == 0) {
+        playerOneMove = true;
+        playerTwoMove = false;
+        uint256 randomNumber = generateRandomNumber();
+        playerOneNumbers.push(randomNumber);
+        playerOnePoints = addPlayerOnePoints();
+        playerMoves[msg.sender] += 1;
+        }
+        else {
         require(playerTwoMove, "Wait for player Two to finish his move");
         uint256 randomNumber = generateRandomNumber();
         playerOneNumbers.push(randomNumber);
@@ -113,6 +122,7 @@ contract DiceGame {
         playerMoves[msg.sender] += 1;
         playerOneMove = true;
         playerTwoMove = false;
+        }
         return playerOnePoints;
     }
 
@@ -133,27 +143,36 @@ contract DiceGame {
         return playerTwoPoints;
     }
 
-    function rollDiceFirstTime()
+    function restartGame()
     public
-    onlyPlayerOne
-    gameOngoing
-    returns(uint256)
+    onlyPlayers
+    onlyOwner
     {
-        require(playerMoves[msg.sender] == 0, "Function can only be called once!");
-        require(playerOnePoints < winningPoints && playerTwoPoints < winningPoints, "POINTS_EXCEEDED!!!");
-        uint256 randomNumber = generateRandomNumber();
-        playerOneNumbers.push(randomNumber);
-        playerOnePoints = addPlayerOnePoints();
-        playerMoves[msg.sender] += 1;
-        playerOneMove = true;
-        playerTwoMove = false;
-        return playerOnePoints;
+        require(block.timestamp > gameTime, "GAME_STILL_ONGOING");
+        if (playerOnePoints >= winningPoints 
+        || playerTwoPoints >= winningPoints 
+        && winnerRewarded)
+        {
+           hasJoined[players[0]] = false;
+           hasJoined[players[1]] = false;
+           playerMoves[players[0]] = 0;
+           playerMoves[players[1]] = 0;
+           gameTime = 0;
+           playerOneMove = false;
+           playerTwoMove = false;
+           playerOnePoints = 0; 
+           playerTwoPoints = 0;
+           winningPoints = 0;
+           winnerRewarded = false;
+           players = new address[](0);
+           playerOneNumbers = new uint256[](0);
+           playerTwoNumbers = new uint256[](0);
+        }
     }
 
-    // only reward when the time has exceeded, only reward when the time has exceeded and there is a winner i have now
-    function rewardWinner() 
-    external 
-    returns(address) 
+    function rewardWinner()
+    external
+    returns(address)
     {
         address winner;
         require(block.timestamp > gameTime, "TIME_LIMIT_NOT_EXCEEDED");
@@ -169,21 +188,16 @@ contract DiceGame {
             (bool sent, ) = winner.call{ value: _amount }("");
             require(sent, "FAILED TO REWARD WINNER 2");
         }
+        winnerRewarded = true;
         require(winner == players[0] || winner == players[1], "NO_WINNER_TO_REWARD");
         return winner;
     }
-
-    // Function for restarting the game to make the contract reusable
-
-
-    // @dev 
 
     function rewardWinnersPercentage() public view returns(uint256) {
         uint256 amount = (address(this).balance * 90) / 100;
         return amount;
     }
 
-    // add prev points and winner maloomawal
     function addPlayerOnePoints() private view returns(uint256) {
         uint256 playerOneScores;
         for(uint256 i = 0; i < playerOneNumbers.length; i++) {
@@ -230,6 +244,10 @@ contract DiceGame {
 
     function gameID() public view returns(uint256) {
         return gameId;
+    }
+
+    function getWinningPoints() public view returns(uint256) {
+        return winningPoints;
     }
 
 }
