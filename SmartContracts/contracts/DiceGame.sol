@@ -1,15 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-/*
-=> Dice Game where users have to pay a certain amount of money in order to join
-=> Only 2 players can play at a time
-=> The numbers generated would be from 1 to 6 as in the dice
-=> The numbers need to be randomly generated from the chainlink oracle
-=> 
-=> Winner gets all 
-*/
-
 contract DiceGame {
 
     error NOT_ENOUGH_ETH();
@@ -17,7 +8,7 @@ contract DiceGame {
     error NOT_OWNER();
     error ONLY_PLAYERS_CAN_ROLL_DICE();
 
-    address public immutable owner;
+    address payable public immutable owner;
     uint256 public maxPlayers;
     address[] public players;
     uint256 public gameTime;
@@ -34,7 +25,7 @@ contract DiceGame {
     mapping(address => uint256) public playerMoves;
 
     constructor(uint256 _winningPoints) payable {
-        owner = msg.sender;
+        owner = payable(msg.sender);
         winningPoints = _winningPoints;
     }
 
@@ -51,7 +42,7 @@ contract DiceGame {
         }
         _;
     }
-    // game should be ongoing in order for it to work and not more than 2 players should be able to join
+    
     function joinGame() public payable alreadyJoined gameOngoing {
         require(players.length < 3, "ONLY_TWO_PLAYERS_CAN_PLAY");
         if (msg.value < 0.1 ether) {
@@ -78,6 +69,7 @@ contract DiceGame {
         }
         _;
     }
+
     modifier onlyPlayerTwo {
         if (msg.sender != players[1]) {
             revert("NOT_PLAYER_TWO");
@@ -109,19 +101,28 @@ contract DiceGame {
         return playerTwoPoints;
     }
 
-    function checkWinner() external {
+    function rewardWinner() external returns(address) {
+        address winner;
+        uint256 _amount = rewardWinnersPercentage();
         if(playerOnePoints >= winningPoints) {
-            
-            // playerOne wins
+            winner = players[0];
+            (bool sent, ) = winner.call{ value: _amount }("");
+            require(sent, "FAILED TO REWARD WINNER 1");
         }
         else if(playerTwoPoints >= winningPoints) {
-            
-            // playerTwo wins
+            winner = players[1];
+            (bool sent, ) = winner.call{ value: _amount }("");
+            require(sent, "FAILED TO REWARD WINNER 2");
         }
+        return winner;
+    }
+
+    function rewardWinnersPercentage() public view returns(uint256) {
+        uint256 amount = (address(this).balance * 90) / 100;
+        return amount;
     }
 
     // add prev points and winner maloomawal
-
     function addPlayerOnePoints() private view returns(uint256) {
         uint256 playerOneScores;
         for(uint256 i = 0; i < playerOneNumbers.length; i++) {
@@ -137,8 +138,6 @@ contract DiceGame {
         }
         return playerTwoScores;
     }
-
-
 
     function generateRandomNumber() internal view returns(uint256) {
         uint256 rand = uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty, msg.sender))) % 6 + 1;
@@ -157,11 +156,17 @@ contract DiceGame {
         _;
     }
 
+    function withdraw() external onlyOwner {
+        uint256 contractBalance = getContractBalance();
+        require(contractBalance > 0, "NO_BALANCE_TO_WITHDRAW");
+        require(block.timestamp > gameTime, "GAME_ONGOING");
+        owner.transfer(contractBalance);
+    }
+
     // this should fetch the balance of the smart contract
     function getContractBalance() 
     public
     view
-    onlyOwner
     returns (uint256) 
     {
         return address(this).balance;
@@ -171,28 +176,4 @@ contract DiceGame {
         return gameId;
     }
 
-    
-
 }
-
- /*
-function flip(bool _guess) public returns (bool) {
-    uint256 blockValue = uint256(blockhash(block.number - 1));
-
-    if (lastHash == blockValue) {
-      revert();
-    }
-
-    lastHash = blockValue;
-    uint256 coinFlip = blockValue / FACTOR;
-    bool side = coinFlip == 1 ? true : false;
-
-    if (side == _guess) {
-      consecutiveWins++;
-      return true;
-    } else {
-      consecutiveWins = 0;
-      return false;
-    }
-  }
-*/
