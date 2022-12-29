@@ -1,6 +1,8 @@
 # Smart Contracts to build dapps on
 
-- Lottery Smart Contract
+- CoinFlip
+- Dice Game
 - English Auction
+- Lottery Game
+- Salary Management
 - V1 Decentralized Exchange
-- Salary Management Dapp
