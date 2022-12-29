@@ -15,18 +15,19 @@ contract DiceGame {
     uint256[] public playerOneNumbers;
     uint256[] public playerTwoNumbers;
     bool public playerOneMove;
-    bool public playerTwoMove;
-    uint256 playerOnePoints;
-    uint256 playerTwoPoints;
+    bool public playerTwoMove = true;
+    uint256 public playerOnePoints;
+    uint256 public playerTwoPoints;
     uint256 winningPoints;
     bool public winnerRewarded;
+    bool withdrawn;
 
     mapping(address => bool) public hasJoined;
     mapping(address => uint256) public playerMoves;
 
     constructor(uint256 _winningPoints) payable {
         owner = payable(msg.sender);
-        _winningPoints = winningPoints;
+        winningPoints = _winningPoints;
     }
 
     modifier alreadyJoined() {
@@ -51,7 +52,7 @@ contract DiceGame {
     }
 
     function startGameTime() internal {
-        gameTime = block.timestamp + 20 minutes;
+        gameTime = block.timestamp + 2 minutes;
         gameId++;
     }
 
@@ -69,7 +70,7 @@ contract DiceGame {
     }
     
     function joinGame() public payable alreadyJoined notEnoughEth {
-        require(players.length < 3, "ONLY_TWO_PLAYERS_CAN_PLAY");
+        require(players.length < 2, "ONLY_TWO_PLAYERS_CAN_PLAY");
         if (block.timestamp > gameTime) {
             revert("GAME_TIME_LIMIT_HAS_EXCEEDED");
         }
@@ -105,7 +106,6 @@ contract DiceGame {
     gameOngoing
     returns(uint256)
     {
-        require(playerOnePoints < winningPoints && playerTwoPoints < winningPoints, "POINTS_EXCEEDED!!!");
         if (playerMoves[msg.sender] == 0) {
         playerOneMove = true;
         playerTwoMove = false;
@@ -115,6 +115,7 @@ contract DiceGame {
         playerMoves[msg.sender] += 1;
         }
         else {
+        require(playerOnePoints < winningPoints && playerTwoPoints < winningPoints, "POINTS_EXCEEDED!!!");
         require(playerTwoMove, "Wait for player Two to finish his move");
         uint256 randomNumber = generateRandomNumber();
         playerOneNumbers.push(randomNumber);
@@ -145,13 +146,11 @@ contract DiceGame {
 
     function restartGame()
     public
-    onlyPlayers
-    onlyOwner
     {
         require(block.timestamp > gameTime, "GAME_STILL_ONGOING");
         if (playerOnePoints >= winningPoints 
         || playerTwoPoints >= winningPoints 
-        && winnerRewarded)
+        && winnerRewarded && withdrawn)
         {
            hasJoined[players[0]] = false;
            hasJoined[players[1]] = false;
@@ -176,7 +175,6 @@ contract DiceGame {
     {
         address winner;
         require(block.timestamp > gameTime, "TIME_LIMIT_NOT_EXCEEDED");
-        require(winner != address(0), "NO_WINNER_YET");
         uint256 _amount = rewardWinnersPercentage();
         if(playerOnePoints >= winningPoints) {
             winner = players[0];
@@ -227,6 +225,7 @@ contract DiceGame {
     }
 
     function withdraw() external onlyOwner {
+        require(withdrawn, "NOT_WITHDRAWN_YET");
         uint256 contractBalance = getContractBalance();
         require(contractBalance > 0, "NO_BALANCE_TO_WITHDRAW");
         require(block.timestamp > gameTime, "GAME_ONGOING");
@@ -248,6 +247,22 @@ contract DiceGame {
 
     function getWinningPoints() public view returns(uint256) {
         return winningPoints;
+    }
+
+    function getPlayerOnePoints() public view returns (uint256) {
+        return playerOnePoints;
+    }
+
+    function getPlayerTwoPoints() public view returns (uint256) {
+        return playerTwoPoints;
+    }
+
+    function getGamePlayers() public view returns (address[] memory ) {
+        return players;
+    }
+
+    function checkWithdrawalState() public view returns (bool) {
+        return withdrawn;
     }
 
 }
