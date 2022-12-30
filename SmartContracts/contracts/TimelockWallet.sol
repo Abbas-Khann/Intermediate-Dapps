@@ -3,6 +3,10 @@
 pragma solidity ^0.8.0;
 
 contract TimeLockWallet {
+
+    event Transfer(address _to, address _from, uint256 _amount);
+    event LockFunds(uint256 amount, uint256 _time, uint256 _id);
+    event Withdraw(uint256 _id);
     
     address payable public owner;
 
@@ -33,6 +37,7 @@ contract TimeLockWallet {
         require(walletBalance() > 0, "NOTHING_TO_TRANSFER");
         (bool sent ,) = _to.call{ value: msg.value }("");
         require(sent, "FAILED_TO_TRANSFER");
+        emit Transfer(_to, msg.sender, msg.value);
     }
 
     function lockFunds(uint256 _time)
@@ -45,6 +50,7 @@ contract TimeLockWallet {
         lock[lockId].time = _time;
         lock[lockId].status = true;
         lockId++;
+        emit LockFunds(lock[lockId].amount, _time, lockId - 1);
     }
 
     function withdrawLockedFunds(uint256 _id)
@@ -58,6 +64,7 @@ contract TimeLockWallet {
         payable(owner).transfer(thisLock.amount);
         thisLock.amount = 0;
         thisLock.time = 0;
+        emit Withdraw(_id);
     }
 
     function getAllLockedFunds() public view returns (uint256) {
