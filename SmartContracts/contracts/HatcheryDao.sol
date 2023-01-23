@@ -63,7 +63,9 @@ contract HatcheryDao is ERC20 {
 
     mapping (address => bool) public hasJoined;
     mapping (uint256 => Investor) public investor;
+    mapping (address => bool) public isInvestor;
     mapping (uint256 => Founder) public founder;
+    mapping (address => bool) public isFounder;
 
     uint256 investorId;
     uint256 founderId;
@@ -116,6 +118,7 @@ contract HatcheryDao is ERC20 {
         thisFounder.companyWalletAddress = _companyWalletAddress;
         thisFounder.videoHash = _videoHash;
         thisFounder.registered = true;
+        isFounder[msg.sender] = true;
         founderId++;
     }
 
@@ -137,8 +140,39 @@ contract HatcheryDao is ERC20 {
         thisInvestor.userAddress = _investorWalletAddress;
         thisInvestor.valuation = _valuation;
         thisInvestor.registered = true;
+        isInvestor[msg.sender] = true;
         investorId++;
     }
+    
     // These two will make you eligible for certain function calls
+    modifier onlyInvestor(uint256 _id) {
+        if (investor[_id].registered != true) {
+            revert("ONLY_INVESTORS_CAN_CLAIM");
+        }
+        _;
+    }
 
+    modifier onlyFounder(uint256 _id) {
+        if (founder[_id].registered != true) {
+            revert("ONLY_FOUNDERS_CAN_CLAIM");
+        }
+        _;
+    }
+
+    function claimTokens(uint256 _id) 
+    public
+    onlyInvestor(_id)
+    onlyFounder(_id)
+    {
+        if(isInvestor[msg.sender] == true) {
+            _transfer(address(this), msg.sender, 200);
+        }
+        else if (isFounder[msg.sender] == true) {
+            _transfer(address(this), msg.sender, 150);
+        }
+        else {
+            revert("YOU_ARE_NOT_ELIGIBLE_TO_CLAIM");
+        }
+    }
+        
 }
