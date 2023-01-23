@@ -111,7 +111,7 @@ contract HatcheryDao is ERC20 {
     {
         require(hasJoined[msg.sender], "YOU_NEED_TO_JOIN_FIRST");
         require(msg.value == 0.5 ether, "BROKE_BUMS_CAN'T_REGISTER_AS_FOUNDERS");
-        Founder memory thisFounder = founder[founderId];
+        Founder storage thisFounder = founder[founderId];
         thisFounder.name = _name;
         thisFounder.description = _description;
         thisFounder.nativeToken = _nativeToken;
@@ -134,7 +134,7 @@ contract HatcheryDao is ERC20 {
     {
         require(hasJoined[msg.sender], "YOU_NEED_TO_JOIN_DAO_FIRST");
         require(msg.value == 1 ether, "BROKE_SO_CALLED_INVESTORS_NOT_ALLOWED");
-        Investor memory thisInvestor = investor[investorId];
+        Investor storage thisInvestor = investor[investorId];
         thisInvestor.name = _name;
         thisInvestor.description = _description;
         thisInvestor.userAddress = _investorWalletAddress;
@@ -145,30 +145,53 @@ contract HatcheryDao is ERC20 {
     }
     
     // These two will make you eligible for certain function calls
-    modifier onlyInvestor(uint256 _id) {
-        if (investor[_id].registered != true) {
-            revert("ONLY_INVESTORS_CAN_CLAIM");
+    modifier enoughEth(uint256 _amount) {
+        if(_amount == 1) {
+            require(msg.value == 0.01 ether, "BROKE_BUMS_CAN'T_BUY_KHAN_TOKENS");
+        }
+        else if(_amount == 2) {
+            require(msg.value == 0.02 ether, "BROKE_BUMS_CAN'T_BUY_KHAN_TOKENS");
+        }
+        else if(_amount == 3) {
+            require(msg.value == 0.03 ether, "BROKE_BUMS_CAN'T_BUY_KHAN_TOKENS");
+        }
+        else if(_amount == 4) {
+            require(msg.value == 0.04 ether, "BROKE_BUMS_CAN'T_BUY_KHAN_TOKENS");
+        }
+        else if(_amount == 5) {
+            require(msg.value == 0.05 ether, "BROKE_BUMS_CAN'T_BUY_KHAN_TOKENS");
+        }
+        else if(_amount == 6) {
+            require(msg.value == 0.06 ether, "BROKE_BUMS_CAN'T_BUY_KHAN_TOKENS");
+        }
+        else if (_amount == 7) {
+            require(msg.value == 0.07 ether, "BROKE_BUMS_CAN'T_BUY_KHAN_TOKENS");
+        }
+        else if(_amount == 8) {
+            require(msg.value == 0.08 ether, "BROKE_BUMS_CAN'T_BUY_KHAN_TOKENS");
+        }
+        else if(_amount == 9) {
+            require(msg.value == 0.09 ether, "BROKE_BUMS_CAN'T_BUY_KHAN_TOKENS");
+        }
+        else if(_amount == 10) {
+            require(msg.value == 0.1 ether, "BROKE_BUMS_CAN'T_BUY_KHAN_TOKENS");
+        }
+        else {
+            revert("CAN'T BUY MORE THAN 10 TOKENS");
         }
         _;
     }
 
-    modifier onlyFounder(uint256 _id) {
-        if (founder[_id].registered != true) {
-            revert("ONLY_FOUNDERS_CAN_CLAIM");
-        }
-        _;
-    }
-
-    function claimTokens(uint256 _id) 
+    function claimTokens(uint256 _amount)
     public
-    onlyInvestor(_id)
-    onlyFounder(_id)
+    payable
+    enoughEth(_amount)
     {
         if(isInvestor[msg.sender] == true) {
-            _transfer(address(this), msg.sender, 200);
+            _transfer(address(this), msg.sender, _amount);
         }
         else if (isFounder[msg.sender] == true) {
-            _transfer(address(this), msg.sender, 150);
+            _transfer(address(this), msg.sender, _amount);
         }
         else {
             revert("YOU_ARE_NOT_ELIGIBLE_TO_CLAIM");
@@ -176,7 +199,16 @@ contract HatcheryDao is ERC20 {
     }
 
     // after registration they can create if they have a certain amount of balance
+    function getContractBalance() public view returns(uint256) {
+        return address(this).balance;
+    }
 
+    function getInvestorId() public view returns(uint256) {
+        return investorId;
+    }
 
-        
+    function getFounderId() public view returns(uint256) {
+        return founderId;
+    }
+
 }
