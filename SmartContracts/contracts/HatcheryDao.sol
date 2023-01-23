@@ -174,5 +174,9 @@ contract HatcheryDao is ERC20 {
             revert("YOU_ARE_NOT_ELIGIBLE_TO_CLAIM");
         }
     }
+
+    // after registration they can create if they have a certain amount of balance
+
+
         
 }
