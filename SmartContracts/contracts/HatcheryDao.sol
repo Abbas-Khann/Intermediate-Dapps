@@ -29,9 +29,6 @@ comapany
 description
 valuation             ++ Address
 
-
-
-
 => Users should be able to join the DAO
 => Users should be able to buy the tokens
 => Users should be able to create a post for a startup
@@ -48,17 +45,23 @@ contract HatcheryDao is ERC20 {
         string name;
         string description;
         address userAddress;
-        uint256 valuation;
         bool registered;
     }
 
     struct Founder {
         string name;
         string description;
-        string nativeToken;
-        address companyWalletAddress;
-        string videoHash;
+        address userAddress;
         bool registered;
+    }
+
+    struct Startup {
+        string name;
+        string description;
+        address nativeToken;
+        string videoHash;
+        uint256 valuation;
+        bool updated;
     }
 
     mapping (address => bool) public hasJoined;
@@ -66,9 +69,11 @@ contract HatcheryDao is ERC20 {
     mapping (address => bool) public isInvestor;
     mapping (uint256 => Founder) public founder;
     mapping (address => bool) public isFounder;
+    mapping (uint256 => Startup) public startup;
 
     uint256 investorId;
     uint256 founderId;
+    uint256 startupId;
 
     address[] public DAO_Members;
 
@@ -102,9 +107,7 @@ contract HatcheryDao is ERC20 {
     function registerAsFounder(
         string memory _name,
         string memory _description,
-        string memory _nativeToken,
-        address _companyWalletAddress,
-        string memory _videoHash
+        address _companyWalletAddress
     )
     public 
     payable 
@@ -114,9 +117,7 @@ contract HatcheryDao is ERC20 {
         Founder storage thisFounder = founder[founderId];
         thisFounder.name = _name;
         thisFounder.description = _description;
-        thisFounder.nativeToken = _nativeToken;
-        thisFounder.companyWalletAddress = _companyWalletAddress;
-        thisFounder.videoHash = _videoHash;
+        thisFounder.userAddress = _companyWalletAddress;
         thisFounder.registered = true;
         isFounder[msg.sender] = true;
         founderId++;
@@ -126,8 +127,7 @@ contract HatcheryDao is ERC20 {
     function registerAsInvestor(
         string memory _name,
         string memory _description,
-        address _investorWalletAddress,
-        uint256 _valuation
+        address _investorWalletAddress
     )
     public
     payable
@@ -138,7 +138,6 @@ contract HatcheryDao is ERC20 {
         thisInvestor.name = _name;
         thisInvestor.description = _description;
         thisInvestor.userAddress = _investorWalletAddress;
-        thisInvestor.valuation = _valuation;
         thisInvestor.registered = true;
         isInvestor[msg.sender] = true;
         investorId++;
@@ -198,6 +197,59 @@ contract HatcheryDao is ERC20 {
         }
     }
 
+    modifier onlyFounders() {
+        if (!isFounder[msg.sender]) {
+            revert("NOT_FOUNDER");
+        }
+        _;
+    }
+
+    function createPostAsFounder(
+        string memory _name,
+        string memory _description,
+        address _nativeToken,
+        string memory _videoHash,
+        uint256 _valuation
+    )
+    external 
+    onlyFounders
+    {
+        require(balanceOf(msg.sender) >= 2, "ATLEAST_TWO_TOKENS_REQUIRED_TO_POST");
+        Startup storage thisStartup = startup[startupId];
+        thisStartup.name = _name;
+        thisStartup.description = _description;
+        thisStartup.nativeToken = _nativeToken;
+        thisStartup.videoHash = _videoHash;
+        thisStartup.valuation = _valuation;
+        startupId++;
+        _burn(msg.sender, 2);
+    }
+
+    //updateable data
+    function UpdateStartupPost(
+        uint256 _id,
+        string memory _name,
+        string memory _description,
+        address _nativeToken,
+        string memory _videoHash,
+        uint256 _valuation
+    )
+    external
+    onlyFounders
+    {
+        Startup storage thisStartup = startup[_id];
+        require(!thisStartup.updated, "DATA_ALREADY_UPDATED_ONCE");
+        thisStartup.name = _name;
+        thisStartup.description = _description;
+        thisStartup.nativeToken = _nativeToken;
+        thisStartup.videoHash = _videoHash;
+        thisStartup.valuation = _valuation;
+        thisStartup.updated = true;
+    }
+
+    function mint(uint256 _amount) onlyOwner external {
+        _mint(address(this), _amount);
+    }
     // after registration they can create if they have a certain amount of balance
     function getContractBalance() public view returns(uint256) {
         return address(this).balance;
@@ -211,4 +263,11 @@ contract HatcheryDao is ERC20 {
         return founderId;
     }
 
+    function getStartupId() public view returns(uint256) {
+        return startupId;
+    }
+
+    receive() external payable {}
+
+    fallback() external payable {}
 }
