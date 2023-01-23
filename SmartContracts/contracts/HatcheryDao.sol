@@ -44,7 +44,31 @@ contract HatcheryDao is ERC20 {
 
     address public owner;
 
-    address[] public owners;
+    struct Investor {
+        string name;
+        string description;
+        address userAddress;
+        uint256 valuation;
+        bool registered;
+    }
+
+    struct Founder {
+        string name;
+        string description;
+        string nativeToken;
+        address companyWalletAddress;
+        string videoHash;
+        bool registered;
+    }
+
+    mapping (address => bool) public hasJoined;
+    mapping (uint256 => Investor) public investor;
+    mapping (uint256 => Founder) public founder;
+
+    uint256 investorId;
+    uint256 founderId;
+
+    address[] public DAO_Members;
 
     constructor(uint256 initialSupply) ERC20("HETCHToken", "HDT") {
             _mint(msg.sender, initialSupply);
@@ -58,10 +82,6 @@ contract HatcheryDao is ERC20 {
         _;
     }
 
-    function addNewOwner(address _newOwner) external onlyOwner {
-        owners.push(_newOwner);
-    }
-
     modifier enoughWallabyToJoin () {
         if(msg.value <= 0.1 ether) {
             revert("DAO_NOT_FOR_BROKIES");
@@ -69,9 +89,56 @@ contract HatcheryDao is ERC20 {
         _;
     }
 
-    // registration part
+    // Registration part
     function joinDao() external payable enoughWallabyToJoin  {
-        
+        require(!hasJoined[msg.sender], "ALREADY_JOINED!!!");
+        DAO_Members.push(msg.sender);
+        hasJoined[msg.sender] = true;
     }
+
+    // Registor as a startup founder
+    function registerAsFounder(
+        string memory _name,
+        string memory _description,
+        string memory _nativeToken,
+        address _companyWalletAddress,
+        string memory _videoHash
+    )
+    public 
+    payable 
+    {
+        require(hasJoined[msg.sender], "YOU_NEED_TO_JOIN_FIRST");
+        require(msg.value == 0.5 ether, "BROKE_BUMS_CAN'T_REGISTER_AS_FOUNDERS");
+        Founder memory thisFounder = founder[founderId];
+        thisFounder.name = _name;
+        thisFounder.description = _description;
+        thisFounder.nativeToken = _nativeToken;
+        thisFounder.companyWalletAddress = _companyWalletAddress;
+        thisFounder.videoHash = _videoHash;
+        thisFounder.registered = true;
+        founderId++;
+    }
+
+    // Register as an investor
+    function registerAsInvestor(
+        string memory _name,
+        string memory _description,
+        address _investorWalletAddress,
+        uint256 _valuation
+    )
+    public
+    payable
+    {
+        require(hasJoined[msg.sender], "YOU_NEED_TO_JOIN_DAO_FIRST");
+        require(msg.value == 1 ether, "BROKE_SO_CALLED_INVESTORS_NOT_ALLOWED");
+        Investor memory thisInvestor = investor[investorId];
+        thisInvestor.name = _name;
+        thisInvestor.description = _description;
+        thisInvestor.userAddress = _investorWalletAddress;
+        thisInvestor.valuation = _valuation;
+        thisInvestor.registered = true;
+        investorId++;
+    }
+    // These two will make you eligible for certain function calls
 
 }
