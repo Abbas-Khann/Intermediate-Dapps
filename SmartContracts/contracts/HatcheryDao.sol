@@ -38,6 +38,9 @@ valuation             ++ Address
 
 contract HatcheryDao is ERC20 {
     error NOT_OWNER();
+    event JoinedDao(address member);
+    event Claimed(address member, uint256 amount);
+    event Updated(uint256 _id, bool updateStatus);
 
     address public owner;
 
@@ -101,6 +104,7 @@ contract HatcheryDao is ERC20 {
         require(!hasJoined[msg.sender], "ALREADY_JOINED!!!");
         DAO_Members.push(msg.sender);
         hasJoined[msg.sender] = true;
+        emit JoinedDao(msg.sender);
     }
 
     // Registor as a startup founder
@@ -195,6 +199,7 @@ contract HatcheryDao is ERC20 {
         else {
             revert("YOU_ARE_NOT_ELIGIBLE_TO_CLAIM");
         }
+        emit Claimed(msg.sender, _amount);
     }
 
     modifier onlyFounders() {
@@ -245,6 +250,7 @@ contract HatcheryDao is ERC20 {
         thisStartup.videoHash = _videoHash;
         thisStartup.valuation = _valuation;
         thisStartup.updated = true;
+        emit Updated(_id, thisStartup.updated);
     }
 
     function mint(uint256 _amount) onlyOwner external {
