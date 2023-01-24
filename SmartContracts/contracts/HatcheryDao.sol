@@ -42,7 +42,7 @@ contract HatcheryDao is ERC20 {
     event Claimed(address member, uint256 amount);
     event Updated(uint256 _id, bool updateStatus);
 
-    address public owner;
+    address private owner;
 
     struct Investor {
         string name;
@@ -81,7 +81,7 @@ contract HatcheryDao is ERC20 {
     address[] public DAO_Members;
 
     constructor(uint256 initialSupply) ERC20("HETCHToken", "HDT") {
-            _mint(msg.sender, initialSupply);
+            _mint(address(this), initialSupply);
             owner = msg.sender;
     }
 
@@ -253,6 +253,8 @@ contract HatcheryDao is ERC20 {
         emit Updated(_id, thisStartup.updated);
     }
 
+
+
     function mint(uint256 _amount) onlyOwner external {
         _mint(address(this), _amount);
     }
@@ -271,6 +273,10 @@ contract HatcheryDao is ERC20 {
 
     function getStartupId() public view returns(uint256) {
         return startupId;
+    }
+
+    function getOwner() public view returns(address) {
+        return owner;
     }
 
     receive() external payable {}
