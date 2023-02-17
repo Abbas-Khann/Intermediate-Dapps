@@ -95,6 +95,22 @@ contract SIDAOFactory is ERC721, Ownable, ERC721URIStorage, AccessControl {
         super.tokenURI(tokenId);
     }
 
+    function transferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) public override {
+        require(from == address(0) || to == address(0), "CANT_SELL_SBTs");
+    }
+
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) public override {
+        require(from == address(0) || to == address(0), "CANT_SELL_SBTs");
+    }
+
     function _burn(
         uint256 tokenId
     ) internal override(ERC721, ERC721URIStorage) {
