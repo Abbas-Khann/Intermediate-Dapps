@@ -139,4 +139,16 @@ contract SIDAOFactory is ERC721, Ownable, ERC721URIStorage, AccessControl {
             hasMintedInvestorSBT[msg.sender] = false;
         }
     }
+
+    /*
+     @dev withdraw the DAO Earnings as the owner
+    */
+
+    function withdraw() external onlyRole(OWNER_ROLE) {
+        require(address(this).balance > 0, "CONTRACT_EMPTY!!!");
+        (bool sent, ) = payable(msg.sender).call{value: address(this).balance}(
+            ""
+        );
+        require(sent, "FAILED_TO_WITHDRAW");
+    }
 }
