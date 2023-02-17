@@ -25,6 +25,10 @@ contract SIDAOFactory is ERC721, Ownable, ERC721URIStorage, AccessControl {
     string private startupURI;
     string private investorURI;
 
+    bytes32 public constant OWNER_ROLE = keccak256("OWNER_ROLE");
+    bytes32 public constant STARTUP = keccak256("STARTUP");
+    bytes32 public constant INVESTOR = keccak256("INVESTOR");
+
     address owner;
     mapping(address => bool) private hasMintedStartupSBT;
     mapping(address => bool) private hasMintedInvestorSBT;
@@ -34,6 +38,7 @@ contract SIDAOFactory is ERC721, Ownable, ERC721URIStorage, AccessControl {
     }
 
     constructor() ERC721("SIPF", "SID") {
+        _grantRole(OWNER_ROLE, msg.sender);
         owner = msg.sender;
     }
 
@@ -81,6 +86,14 @@ contract SIDAOFactory is ERC721, Ownable, ERC721URIStorage, AccessControl {
 
     function contractOwner() public view returns (address) {
         return owner;
+    }
+
+    function setStartupURI(string memory URI) external onlyRole(OWNER_ROLE) {
+        startupURI = URI;
+    }
+
+    function setInvestorURI(string memory URI) external onlyRole(OWNER_ROLE) {
+        investorURI = URI;
     }
 
     function supportsInterface(
