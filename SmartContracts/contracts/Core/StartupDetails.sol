@@ -2,7 +2,6 @@
 pragma solidity ^0.8.9;
 
 struct Startup_Details {
-    uint256 id;
     string name;
     string tagline;
     string description;
