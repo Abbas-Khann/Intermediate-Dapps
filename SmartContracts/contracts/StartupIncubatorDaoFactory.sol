@@ -2,7 +2,6 @@
 pragma solidity ^0.8.4;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
@@ -18,7 +17,7 @@ earning on selling of SBTs
 
 */
 
-contract SIDAOFactory is ERC721, Ownable, ERC721URIStorage, AccessControl {
+contract SIDAOFactory is ERC721, ERC721URIStorage, AccessControl {
     using Counters for Counters.Counter;
 
     Counters.Counter private _tokenIdCounter;
@@ -32,10 +31,6 @@ contract SIDAOFactory is ERC721, Ownable, ERC721URIStorage, AccessControl {
     address owner;
     mapping(address => bool) private hasMintedStartupSBT;
     mapping(address => bool) private hasMintedInvestorSBT;
-    enum Token {
-        Startup,
-        Investor
-    }
 
     constructor() ERC721("SIPF", "SID") {
         _grantRole(OWNER_ROLE, msg.sender);
@@ -112,7 +107,7 @@ contract SIDAOFactory is ERC721, Ownable, ERC721URIStorage, AccessControl {
         address from,
         address to,
         uint256 tokenId
-    ) public override {
+    ) public pure override {
         require(from == address(0) || to == address(0), "CANT_SELL_SBTs");
     }
 
@@ -120,7 +115,7 @@ contract SIDAOFactory is ERC721, Ownable, ERC721URIStorage, AccessControl {
         address from,
         address to,
         uint256 tokenId
-    ) public override {
+    ) public pure override {
         require(from == address(0) || to == address(0), "CANT_SELL_SBTs");
     }
 
@@ -130,25 +125,16 @@ contract SIDAOFactory is ERC721, Ownable, ERC721URIStorage, AccessControl {
         super._burn(tokenId);
     }
 
-    function burn(uint256 tokenId, Token token) external {
-        if (token == Token.Startup) {
-            _burn(tokenId);
-            hasMintedStartupSBT[msg.sender] = false;
-        } else if (token == Token.Investor) {
-            _burn(tokenId);
-            hasMintedInvestorSBT[msg.sender] = false;
-        }
+    // Two burn functions to see change the states accordingly
+    function burnStartupSBT(uint256 tokenId) external {
+        require(hasMintedStartupSBT[msg.sender], "YOU_DONT_OWN_STARTUP_SBT");
+        _burn(tokenId);
+        hasMintedStartupSBT[msg.sender] = false;
     }
 
-    /*
-     @dev withdraw the DAO Earnings as the owner
-    */
-
-    function withdraw() external onlyRole(OWNER_ROLE) {
-        require(address(this).balance > 0, "CONTRACT_EMPTY!!!");
-        (bool sent, ) = payable(msg.sender).call{value: address(this).balance}(
-            ""
-        );
-        require(sent, "FAILED_TO_WITHDRAW");
+    function burnInvestorSBT(uint256 tokenId) external {
+        require(hasMintedInvestorSBT[msg.sender], "YOU_DONT_OWN_INVESTOR_SBT");
+        _burn(tokenId);
+        hasMintedInvestorSBT[msg.sender] = false;
     }
 }
