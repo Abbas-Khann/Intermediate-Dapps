@@ -8,11 +8,9 @@ struct Startup_Details {
     uint256 amount;
     address payable owner;
     uint128 upvotes;
-    uint128 downvotes;
     address[] voters;
 }
 
 enum Vote {
-    YAY,
-    NAY
+    YAY
 }
