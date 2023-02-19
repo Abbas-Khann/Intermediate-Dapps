@@ -115,4 +115,8 @@ contract Main {
     function getAllStartups() public view returns (Startup_Details[] memory) {
         return allStartups;
     }
+
+    fallback() external payable {}
+
+    receive() external payable {}
 }
