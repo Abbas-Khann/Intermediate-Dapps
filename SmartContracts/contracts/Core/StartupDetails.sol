@@ -6,6 +6,7 @@ struct Startup_Details {
     string tagline;
     string description;
     uint256 amount;
+    uint256 amountRaised;
     address payable owner;
     uint128 upvotes;
     address[] voters;

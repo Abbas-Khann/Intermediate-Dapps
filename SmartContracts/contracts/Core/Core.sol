@@ -64,13 +64,35 @@ contract Main {
         allStartups.push(startupDetails);
     }
 
-    function VoteOnStartup(Vote vote) external InvestorOrFounder {
+    function VoteOnStartup(uint256 _id, Vote vote) external InvestorOrFounder {
         require(!hasVoted[msg.sender][startupId], "ALREADY_VOTED");
-        Startup_Details storage startupDetails = startup[startupId];
+        Startup_Details storage startupDetails = startup[_id];
         if (vote == Vote.YAY) {
             startupDetails.upvotes += 1;
             startupDetails.voters.push(msg.sender);
             hasVoted[msg.sender][startupId] = true;
+        }
+    }
+
+    function investInStartup(
+        uint256 _id
+    ) external payable onlyInvestorSBTOwner {
+        require(msg.value > 0, "BROKE_BUM!!!");
+        Startup_Details storage startupDetails = startup[_id];
+        uint256 commissionAmount = returnOnInvestment(_id);
+        (bool sendCommission, ) = address(this).call{value: commissionAmount}(
+            ""
+        );
+        require(sendCommission, "FAILED_TO_SEND_COMMISSION");
+        (bool sendToFounder, ) = startupDetails.owner.call{value: msg.value}(
+            ""
+        );
+        require(sendToFounder, "FAILED_TO_INVEST");
+    }
+
+    function returnOnInvestment(uint256 _id) public view returns (uint256) {
+        unchecked {
+            return (startup[_id].amount / 100) * 10;
         }
     }
 
