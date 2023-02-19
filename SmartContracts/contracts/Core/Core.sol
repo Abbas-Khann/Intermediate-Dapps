@@ -13,6 +13,7 @@ contract Main {
 
     mapping(uint256 => Startup_Details) internal startup;
     mapping(address => mapping(uint256 => bool)) internal hasVoted;
+    mapping(address => uint256) public amountInvested;
     uint256 startupId;
 
     Startup_Details[] internal allStartups;
@@ -79,6 +80,10 @@ contract Main {
     ) external payable onlyInvestorSBTOwner {
         require(msg.value > 0, "BROKE_BUM!!!");
         Startup_Details storage startupDetails = startup[_id];
+        require(
+            startupDetails.amountRaised <= startupDetails.amount,
+            "DONT_NEED_NO_MORE_INVESTORS"
+        );
         uint256 commissionAmount = returnOnInvestment(_id);
         (bool sendCommission, ) = address(this).call{value: commissionAmount}(
             ""
@@ -88,12 +93,23 @@ contract Main {
             ""
         );
         require(sendToFounder, "FAILED_TO_INVEST");
+        amountInvested[msg.sender] += msg.value;
     }
 
     function returnOnInvestment(uint256 _id) public view returns (uint256) {
         unchecked {
             return (startup[_id].amount / 100) * 10;
         }
+    }
+
+    function withdraw() public {
+        require(msg.sender == SIDFactory.getOwner(), "NOT_OWNER");
+        require(
+            address(this).balance > 0,
+            "WHAT_ARE_YOU_TRYING_TO_WITHDRAW???"
+        );
+        (bool withdrawn, ) = msg.sender.call{value: address(this).balance}("");
+        require(withdrawn, "FAILED_TO_WITHDRAW");
     }
 
     function getAllStartups() public view returns (Startup_Details[] memory) {
