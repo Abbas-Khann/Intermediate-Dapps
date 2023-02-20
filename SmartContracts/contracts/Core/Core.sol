@@ -61,14 +61,15 @@ contract Main {
         startupDetails.description = _description;
         startupDetails.amount = _amount * 10 ** 18;
         startupDetails.owner = payable(msg.sender);
+        startupDetails.isActive = true;
         startupId += 1;
         allStartups.push(startupDetails);
     }
 
     function VoteOnStartup(uint256 _id, Vote vote) external InvestorOrFounder {
-        // startup should exist check
         require(!hasVoted[msg.sender][_id], "ALREADY_VOTED");
         Startup_Details storage startupDetails = startup[_id];
+        require(startupDetails.isActive, "STARTUP_DOES_NOT_EXIST");
         if (vote == Vote.YAY) {
             startupDetails.upvotes += 1;
             startupDetails.voters.push(msg.sender);
@@ -79,12 +80,12 @@ contract Main {
     function investInStartup(
         uint256 _id
     ) external payable onlyInvestorSBTOwner {
-        // startup should exist check
         require(msg.value > 0, "BROKE_BUM!!!");
         Startup_Details storage startupDetails = startup[_id];
+        require(startupDetails.isActive, "STARTUP_DOES_NOT_EXIST");
         require(
             startupDetails.amountRaised <= startupDetails.amount,
-            "DONT_NEED_NO_MORE_INVESTORS"
+            "DONT_NEED_ANYMORE_INVESTORS"
         );
         uint256 commissionAmount = (msg.value / 100) * 10;
         startupDetails.owner.transfer(msg.value - commissionAmount);

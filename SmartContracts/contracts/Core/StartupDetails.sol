@@ -8,6 +8,7 @@ struct Startup_Details {
     uint256 amount;
     uint256 amountRaised;
     address payable owner;
+    bool isActive;
     uint128 upvotes;
     address[] voters;
 }
