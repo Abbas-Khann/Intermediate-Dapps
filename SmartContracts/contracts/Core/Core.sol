@@ -11,10 +11,10 @@ error ONLY_FOUNDERS_OR_INVESTORS();
 contract Main {
     SIDAOFactory public SIDFactory;
 
-    mapping(uint256 => Startup_Details) internal startup;
-    mapping(address => mapping(uint256 => bool)) internal hasVoted;
+    mapping(uint256 => Startup_Details) public startup;
+    mapping(address => mapping(uint256 => bool)) public hasVoted;
     mapping(address => uint256) public amountInvested;
-    uint256 startupId;
+    uint256 public startupId;
 
     Startup_Details[] internal allStartups;
 
@@ -38,7 +38,7 @@ contract Main {
 
     modifier InvestorOrFounder() {
         if (
-            SIDFactory.isStartupSBTOwner(msg.sender) == false ||
+            SIDFactory.isStartupSBTOwner(msg.sender) == false &&
             SIDFactory.isInvestorSBTOwner(msg.sender) == false
         ) {
             revert ONLY_FOUNDERS_OR_INVESTORS();
@@ -59,47 +59,37 @@ contract Main {
         startupDetails.name = _name;
         startupDetails.tagline = _tagline;
         startupDetails.description = _description;
-        startupDetails.amount = _amount;
+        startupDetails.amount = _amount * 10 ** 18;
         startupDetails.owner = payable(msg.sender);
         startupId += 1;
         allStartups.push(startupDetails);
     }
 
     function VoteOnStartup(uint256 _id, Vote vote) external InvestorOrFounder {
-        require(!hasVoted[msg.sender][startupId], "ALREADY_VOTED");
+        // startup should exist check
+        require(!hasVoted[msg.sender][_id], "ALREADY_VOTED");
         Startup_Details storage startupDetails = startup[_id];
         if (vote == Vote.YAY) {
             startupDetails.upvotes += 1;
             startupDetails.voters.push(msg.sender);
-            hasVoted[msg.sender][startupId] = true;
+            hasVoted[msg.sender][_id] = true;
         }
     }
 
     function investInStartup(
         uint256 _id
     ) external payable onlyInvestorSBTOwner {
+        // startup should exist check
         require(msg.value > 0, "BROKE_BUM!!!");
         Startup_Details storage startupDetails = startup[_id];
         require(
             startupDetails.amountRaised <= startupDetails.amount,
             "DONT_NEED_NO_MORE_INVESTORS"
         );
-        uint256 commissionAmount = returnOnInvestment(_id);
-        (bool sendCommission, ) = address(this).call{value: commissionAmount}(
-            ""
-        );
-        require(sendCommission, "FAILED_TO_SEND_COMMISSION");
-        (bool sendToFounder, ) = startupDetails.owner.call{value: msg.value}(
-            ""
-        );
-        require(sendToFounder, "FAILED_TO_INVEST");
-        amountInvested[msg.sender] += msg.value;
-    }
-
-    function returnOnInvestment(uint256 _id) public view returns (uint256) {
-        unchecked {
-            return (startup[_id].amount / 100) * 10;
-        }
+        uint256 commissionAmount = (msg.value / 100) * 10;
+        startupDetails.owner.transfer(msg.value - commissionAmount);
+        amountInvested[msg.sender] += msg.value - commissionAmount;
+        startupDetails.amountRaised += msg.value - commissionAmount;
     }
 
     function withdraw() public {
@@ -114,6 +104,10 @@ contract Main {
 
     function getAllStartups() public view returns (Startup_Details[] memory) {
         return allStartups;
+    }
+
+    function contractBalance() public view returns (uint256) {
+        return address(this).balance;
     }
 
     fallback() external payable {}
