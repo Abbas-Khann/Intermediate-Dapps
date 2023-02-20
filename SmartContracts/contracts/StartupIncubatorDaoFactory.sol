@@ -5,18 +5,6 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
-// Startup incubator platform where startup founders will be able to raise funds and investors will be able to invest
-
-/*
-How the Dao will make money
-commission on investments
-earning on selling of SBTs
-
-=> Entry on the basis of SBTs
-=> 
-
-*/
-
 contract SIDAOFactory is ERC721, ERC721URIStorage, AccessControl {
     using Counters for Counters.Counter;
 
