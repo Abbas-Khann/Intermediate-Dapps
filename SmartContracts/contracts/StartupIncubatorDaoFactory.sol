@@ -141,4 +141,15 @@ contract SIDAOFactory is ERC721, ERC721URIStorage, AccessControl {
     function getOwner() public view returns (address) {
         return owner;
     }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "NOT_OWNER");
+        _;
+    }
+
+    function withdraw() public onlyOwner {
+        require(address(this).balance > 0, "NOTHING_TO_WITHDRAW");
+        (bool withdrawn, ) = msg.sender.call{value: address(this).balance}("");
+        require(withdrawn, "FAILED_TO_WITHDRAW");
+    }
 }
