@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
-pragma solidity ^0.8.17;
+pragma solidity ^0.8.7;
 
 /*
 => User will enter the game by betting some Eth.
@@ -13,9 +13,20 @@ pragma solidity ^0.8.17;
 contract Tic_Tac_Toe {
     address owner;
 
-    uint256 public constant timeout = 10 minutes;
+    uint256 public constant TIMEOUT = 10 minutes;
 
     constructor() {
         owner = msg.sender;
+    }
+
+    struct Game {
+        address challenger;
+        address challenged;
+        uint256 startingTime;
+        address winner;
+        uint256 timeout;
+        address inactive;
+        address waiting;
+        uint8[] moves;
     }
 }
