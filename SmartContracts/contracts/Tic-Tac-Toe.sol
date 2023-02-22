@@ -11,6 +11,8 @@ pragma solidity ^0.8.7;
 */
 
 error NOT_ENOUGH_ETH();
+error GAME_DOES_NOT_EXIST();
+error YOU_HAVE_ALREADY_JOINED();
 
 contract Tic_Tac_Toe {
     address owner;
@@ -57,6 +59,20 @@ contract Tic_Tac_Toe {
         _;
     }
 
+    modifier gameExists(uint256 _id) {
+        if (games[_id].player1 == address(0)) {
+            revert GAME_DOES_NOT_EXIST();
+        }
+        _;
+    }
+
+    modifier alreadyJoined(uint256 _id) {
+        if (games[_id].player1 == games[_id].player1) {
+            revert YOU_HAVE_ALREADY_JOINED();
+        }
+        _;
+    }
+
     /*
     @dev Start a new game
     */
@@ -69,6 +85,13 @@ contract Tic_Tac_Toe {
         gameId += 1;
         emit NewGame(gameId - 1, msg.sender);
     }
+
+    /*
+    @dev
+    */
+    function joinGame(
+        uint256 _id
+    ) public payable enoughValue gameExists(_id) alreadyJoined(_id) {}
 
     /*
     @dev Return the gameId
