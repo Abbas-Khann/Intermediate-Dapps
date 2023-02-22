@@ -13,20 +13,35 @@ pragma solidity ^0.8.7;
 contract Tic_Tac_Toe {
     address owner;
 
-    uint256 public constant TIMEOUT = 10 minutes;
+    uint256 public constant TIMEOUT = 5 minutes;
+
+    enum Turn {
+        none,
+        player1,
+        player2
+    }
+    enum Result {
+        none,
+        active,
+        player1Wins,
+        player2Wins,
+        draw,
+        abandoned
+    }
 
     constructor() {
         owner = msg.sender;
     }
 
     struct Game {
-        address challenger;
-        address challenged;
+        address player1;
+        address player2;
         uint256 startingTime;
         address winner;
-        uint256 timeout;
-        address inactive;
-        address waiting;
-        uint8[] moves;
+        Turn currentTurn;
+        Result result;
     }
+
+    mapping(uint256 => Game) public game;
+    uint256 gameId;
 }
