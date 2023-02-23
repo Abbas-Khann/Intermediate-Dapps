@@ -19,7 +19,8 @@ contract Tic_Tac_Toe {
 
     uint256 public constant TIMEOUT = 5 minutes;
     // Game Events here
-    event NewGame(uint256 gameId, address creator);
+    event NewGame(uint256 gameId, address creator, uint256 timestamp);
+    event GameJoined(uint256 gameId, address joinee, uint256 timestamp);
 
     enum Turn {
         none,
@@ -67,7 +68,7 @@ contract Tic_Tac_Toe {
     }
 
     modifier alreadyJoined(uint256 _id) {
-        if (games[_id].player1 == games[_id].player1) {
+        if (games[_id].player1 == msg.sender) {
             revert YOU_HAVE_ALREADY_JOINED();
         }
         _;
@@ -76,22 +77,25 @@ contract Tic_Tac_Toe {
     /*
     @dev Start a new game
     */
-
     function startGame() public payable enoughValue {
         Game storage game = games[gameId];
         game.player1 = msg.sender;
         game.currentTurn = Turn.player1;
         game.result = Result.active;
         gameId += 1;
-        emit NewGame(gameId - 1, msg.sender);
+        emit NewGame(gameId - 1, msg.sender, block.timestamp);
     }
 
     /*
-    @dev
+    @dev Join an existing game as player 2
     */
     function joinGame(
         uint256 _id
-    ) public payable enoughValue gameExists(_id) alreadyJoined(_id) {}
+    ) public payable enoughValue gameExists(_id) alreadyJoined(_id) {
+        games[_id].player2 = msg.sender;
+        games[_id].startingTime = block.timestamp + TIMEOUT;
+        emit GameJoined(_id, msg.sender, block.timestamp);
+    }
 
     /*
     @dev Return the gameId
