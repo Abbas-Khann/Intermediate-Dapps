@@ -93,14 +93,13 @@ contract Tic_Tac_Toe {
         uint256 _id
     ) public payable enoughValue gameExists(_id) alreadyJoined(_id) {
         games[_id].player2 = msg.sender;
-        games[_id].startingTime = block.timestamp + TIMEOUT;
+        games[_id].startingTime = block.timestamp;
         emit GameJoined(_id, msg.sender, block.timestamp);
     }
 
     /*
     @dev Return the gameId
     */
-
     function getGameId() public view returns (uint256) {
         return gameId;
     }
