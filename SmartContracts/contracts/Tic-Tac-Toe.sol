@@ -46,11 +46,15 @@ contract Tic_Tac_Toe {
         address player2;
         uint256 startingTime;
         address winner;
+        uint8[] moves;
+        address[8] _moves;
         Turn currentTurn;
+        Turn[3][3] matrix;
         Result result;
     }
 
     mapping(uint256 => Game) public games;
+
     uint256 private gameId;
 
     modifier enoughValue() {
@@ -95,6 +99,22 @@ contract Tic_Tac_Toe {
         games[_id].player2 = msg.sender;
         games[_id].startingTime = block.timestamp;
         emit GameJoined(_id, msg.sender, block.timestamp);
+    }
+
+    /*
+    @dev Checking if the columns are matched
+    */
+    function checkColumns(uint256 _id) public view returns (bool) {
+        Game storage _game = games[_id];
+        for (uint8 i = 0; i < 3; i++) {
+            if (
+                _game._moves[0] == _game.player1 &&
+                _game._moves[1] == _game.player1 &&
+                _game._moves[2] == _game.player1
+            ) {
+                return true;
+            }
+        }
     }
 
     /*
