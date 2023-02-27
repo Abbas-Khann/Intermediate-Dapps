@@ -90,7 +90,7 @@ contract Tic_Tac_Toe {
 
     modifier isCalledByPlayer(uint256 _id) {
         if (
-            msg.sender != games[_id].player1 || msg.sender != games[_id].player2
+            msg.sender != games[_id].player1 && msg.sender != games[_id].player2
         ) {
             revert NOT_PLAYER();
         }
@@ -125,21 +125,13 @@ contract Tic_Tac_Toe {
     */
     function makeMove(
         uint256 _id,
-        uint8 x,
-        uint8 y
+        uint8 x
     ) public gameExists(_id) gameStarted(_id) isCalledByPlayer(_id) {
         Game storage _game = games[_id];
         require(msg.sender == getCurrentPlayer(_id), "NOT_YOUR_TURN");
         // check for invalid move here
-        if (getCurrentPlayer(_id) == _game.player1) {
-            _game.moves[x] = x;
-            _game._moves[x] = msg.sender;
-        } else if (getCurrentPlayer(_id) == _game.player2) {
-            _game.moves[y] = y;
-            _game._moves[y] = msg.sender;
-        } else {
-            revert MOVE_NOT_MADE();
-        }
+        _game.moves[x] = x;
+        _game._moves[x] = msg.sender;
     }
 
     /*
