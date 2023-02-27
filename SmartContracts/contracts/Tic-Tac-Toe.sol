@@ -13,6 +13,8 @@ pragma solidity ^0.8.7;
 error NOT_ENOUGH_ETH();
 error GAME_DOES_NOT_EXIST();
 error YOU_HAVE_ALREADY_JOINED();
+error GAME_NOT_STARTED_YET();
+error NOT_PLAYER();
 
 contract Tic_Tac_Toe {
     address owner;
@@ -21,6 +23,7 @@ contract Tic_Tac_Toe {
     // Game Events here
     event NewGame(uint256 gameId, address creator, uint256 timestamp);
     event GameJoined(uint256 gameId, address joinee, uint256 timestamp);
+    event MoveMade(uint256 gameId, address movee, uint256 timestamp);
 
     enum Turn {
         none,
@@ -49,7 +52,6 @@ contract Tic_Tac_Toe {
         uint8[] moves;
         address[9] _moves;
         Turn currentTurn;
-        Turn[3][3] matrix;
         Result result;
     }
 
@@ -78,6 +80,22 @@ contract Tic_Tac_Toe {
         _;
     }
 
+    modifier gameStarted(uint256 _id) {
+        if (games[_id].player2 == address(0)) {
+            revert GAME_NOT_STARTED_YET();
+        }
+        _;
+    }
+
+    modifier isCalledByPlayer(uint256 _id) {
+        if (
+            msg.sender != games[_id].player1 || msg.sender != games[_id].player2
+        ) {
+            revert NOT_PLAYER();
+        }
+        _;
+    }
+
     /*
     @dev Start a new game
     */
@@ -99,6 +117,18 @@ contract Tic_Tac_Toe {
         games[_id].player2 = msg.sender;
         games[_id].startingTime = block.timestamp;
         emit GameJoined(_id, msg.sender, block.timestamp);
+    }
+
+    /*
+    @dev Make a move in the game
+    */
+    function makeMove(
+        uint256 _id,
+        uint8 x,
+        uint8 y
+    ) public gameExists(_id) gameStarted(_id) isCalledByPlayer(_id) {
+        Game storage _game = games[_id];
+        require(msg.sender == getCurrentPlayer(_id), "NOT_YOUR_TURN");
     }
 
     /*
@@ -141,6 +171,30 @@ contract Tic_Tac_Toe {
                 }
         }
         return false;
+    }
+
+    /*
+    @dev Fetch the current player supposed to make a move
+    */
+    function getCurrentPlayer(uint256 _id) public view returns (address) {
+        if (games[_id].currentTurn == Turn.player1) {
+            return games[_id].player1;
+        } else if (games[_id].currentTurn == Turn.player2) {
+            return games[_id].player2;
+        } else {
+            revert("Unexpected Error Occurred");
+        }
+    }
+
+    /*
+    @dev Fetch the next player supposed to make a move
+    */
+    function getNextPlayer(Turn _currentTurn) public pure returns (Turn) {
+        if (_currentTurn == Turn.player1) {
+            return Turn.player2;
+        } else if (_currentTurn == Turn.player2) {
+            return Turn.player1;
+        } else revert("Err fetching next player");
     }
 
     /*
