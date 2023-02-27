@@ -47,7 +47,7 @@ contract Tic_Tac_Toe {
         uint256 startingTime;
         address winner;
         uint8[] moves;
-        address[8] _moves;
+        address[9] _moves;
         Turn currentTurn;
         Turn[3][3] matrix;
         Result result;
@@ -106,15 +106,41 @@ contract Tic_Tac_Toe {
     */
     function checkColumns(uint256 _id) public view returns (bool) {
         Game storage _game = games[_id];
-        for (uint8 i = 0; i < 3; i++) {
+        for (uint8 i = 0; i < 9; i++) {
             if (
                 _game._moves[0] == _game.player1 &&
                 _game._moves[1] == _game.player1 &&
                 _game._moves[2] == _game.player1
-            ) {
-                return true;
-            }
+            )
+                if (
+                    _game._moves[0] == _game.player2 &&
+                    _game._moves[1] == _game.player2 &&
+                    _game._moves[2] == _game.player2
+                ) {
+                    return true;
+                } else if (
+                    _game._moves[3] == _game.player1 &&
+                    _game._moves[4] == _game.player1 &&
+                    _game._moves[5] == _game.player1
+                ) {
+                    if (
+                        _game._moves[3] == _game.player2 &&
+                        _game._moves[4] == _game.player2 &&
+                        _game._moves[5] == _game.player2
+                    ) return true;
+                } else if (
+                    _game._moves[6] == _game.player1 &&
+                    _game._moves[7] == _game.player1 &&
+                    _game._moves[8] == _game.player1
+                ) {
+                    if (
+                        _game._moves[6] == _game.player2 &&
+                        _game._moves[7] == _game.player2 &&
+                        _game._moves[8] == _game.player2
+                    ) return true;
+                }
         }
+        return false;
     }
 
     /*
