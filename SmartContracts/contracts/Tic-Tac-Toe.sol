@@ -50,7 +50,6 @@ contract Tic_Tac_Toe {
         address player2;
         uint256 startingTime;
         address winner;
-        uint8[] moves;
         address[9] _moves;
         Turn currentTurn;
         Result result;
@@ -130,7 +129,6 @@ contract Tic_Tac_Toe {
         Game storage _game = games[_id];
         require(msg.sender == getCurrentPlayer(_id), "NOT_YOUR_TURN");
         // check for invalid move here
-        _game.moves[x] = x;
         _game._moves[x] = msg.sender;
     }
 
@@ -139,39 +137,21 @@ contract Tic_Tac_Toe {
     */
     function checkColumns(uint256 _id) public view returns (bool) {
         Game storage _game = games[_id];
-        for (uint8 i = 0; i < 9; i++) {
+        for (uint i = 0; i < 3; i++) {
             if (
-                _game._moves[0] == _game.player1 &&
-                _game._moves[1] == _game.player1 &&
-                _game._moves[2] == _game.player1
-            )
-                if (
-                    _game._moves[0] == _game.player2 &&
-                    _game._moves[1] == _game.player2 &&
-                    _game._moves[2] == _game.player2
-                ) {
-                    return true;
-                } else if (
-                    _game._moves[3] == _game.player1 &&
-                    _game._moves[4] == _game.player1 &&
-                    _game._moves[5] == _game.player1
-                ) {
-                    if (
-                        _game._moves[3] == _game.player2 &&
-                        _game._moves[4] == _game.player2 &&
-                        _game._moves[5] == _game.player2
-                    ) return true;
-                } else if (
-                    _game._moves[6] == _game.player1 &&
-                    _game._moves[7] == _game.player1 &&
-                    _game._moves[8] == _game.player1
-                ) {
-                    if (
-                        _game._moves[6] == _game.player2 &&
-                        _game._moves[7] == _game.player2 &&
-                        _game._moves[8] == _game.player2
-                    ) return true;
-                }
+                _game._moves[i] == _game.player1 &&
+                _game._moves[i + 3] == _game.player1 &&
+                _game._moves[i + 6] == _game.player1
+            ) {
+                return true;
+            }
+            if (
+                _game._moves[i] == _game.player2 &&
+                _game._moves[i + 3] == _game.player2 &&
+                _game._moves[i + 6] == _game.player2
+            ) {
+                return true;
+            }
         }
         return false;
     }
@@ -205,5 +185,12 @@ contract Tic_Tac_Toe {
     */
     function getGameId() public view returns (uint256) {
         return gameId;
+    }
+
+    /*
+    @dev Getter function to get the array from the struct
+    */
+    function getMoves(uint256 _id) public view returns (address[9] memory) {
+        return games[_id]._moves;
     }
 }
