@@ -114,6 +114,7 @@ contract Tic_Tac_Toe {
     function joinGame(
         uint256 _id
     ) public payable enoughValue gameExists(_id) alreadyJoined(_id) {
+        // run a check to not allow player2 to join twice
         games[_id].player2 = msg.sender;
         games[_id].startingTime = block.timestamp;
         emit GameJoined(_id, msg.sender, block.timestamp);
@@ -128,7 +129,8 @@ contract Tic_Tac_Toe {
     ) public gameExists(_id) gameStarted(_id) isCalledByPlayer(_id) {
         Game storage _game = games[_id];
         require(msg.sender == getCurrentPlayer(_id), "NOT_YOUR_TURN");
-        // check for invalid move here
+        require(x <= 8, "INVALID_MOVE");
+        require(_game._moves[x] == address(0), "THIS_BOARD_IS_ALREADY_FILLED");
         _game._moves[x] = msg.sender;
     }
 
@@ -137,21 +139,26 @@ contract Tic_Tac_Toe {
     */
     function checkColumns(uint256 _id) public view returns (bool) {
         Game storage _game = games[_id];
-        for (uint i = 0; i < 3; i++) {
-            if (
-                _game._moves[i] == _game.player1 &&
-                _game._moves[i + 3] == _game.player1 &&
-                _game._moves[i + 6] == _game.player1
-            ) {
-                return true;
-            }
-            if (
-                _game._moves[i] == _game.player2 &&
-                _game._moves[i + 3] == _game.player2 &&
-                _game._moves[i + 6] == _game.player2
-            ) {
-                return true;
-            }
+        if (
+            _game._moves[0] == getCurrentPlayer(_id) &&
+            _game._moves[1] == getCurrentPlayer(_id) &&
+            _game._moves[2] == getCurrentPlayer(_id)
+        ) {
+            return true;
+        }
+        if (
+            _game._moves[3] == getCurrentPlayer(_id) &&
+            _game._moves[4] == getCurrentPlayer(_id) &&
+            _game._moves[5] == getCurrentPlayer(_id)
+        ) {
+            return true;
+        }
+        if (
+            _game._moves[6] == getCurrentPlayer(_id) &&
+            _game._moves[7] == getCurrentPlayer(_id) &&
+            _game._moves[8] == getCurrentPlayer(_id)
+        ) {
+            return true;
         }
         return false;
     }
