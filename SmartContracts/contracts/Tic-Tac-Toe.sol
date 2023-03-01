@@ -164,6 +164,57 @@ contract Tic_Tac_Toe {
     }
 
     /*
+    @dev Checking if the rows are matched
+    */
+    function checkRows(uint256 _id) public view returns (bool) {
+        Game storage _game = games[_id];
+        if (
+            _game._moves[0] == getCurrentPlayer(_id) &&
+            _game._moves[3] == getCurrentPlayer(_id) &&
+            _game._moves[6] == getCurrentPlayer(_id)
+        ) {
+            return true;
+        }
+        if (
+            _game._moves[1] == getCurrentPlayer(_id) &&
+            _game._moves[4] == getCurrentPlayer(_id) &&
+            _game._moves[7] == getCurrentPlayer(_id)
+        ) {
+            return true;
+        }
+        if (
+            _game._moves[2] == getCurrentPlayer(_id) &&
+            _game._moves[5] == getCurrentPlayer(_id) &&
+            _game._moves[8] == getCurrentPlayer(_id)
+        ) {
+            return true;
+        }
+        return false;
+    }
+
+    /*
+    @dev Checking for diagonals now
+    */
+    function checkDiagonals(uint256 _id) public view returns (bool) {
+        Game storage _game = games[_id];
+        if (
+            _game._moves[2] == getCurrentPlayer(_id) &&
+            _game._moves[4] == getCurrentPlayer(_id) &&
+            _game._moves[6] == getCurrentPlayer(_id)
+        ) {
+            return true;
+        }
+        if (
+            _game._moves[0] == getCurrentPlayer(_id) &&
+            _game._moves[4] == getCurrentPlayer(_id) &&
+            _game._moves[8] == getCurrentPlayer(_id)
+        ) {
+            return true;
+        }
+        return false;
+    }
+
+    /*
     @dev Fetch the current player supposed to make a move
     */
     function getCurrentPlayer(uint256 _id) public view returns (address) {
