@@ -132,6 +132,7 @@ contract Tic_Tac_Toe {
         require(x <= 8, "INVALID_MOVE");
         require(_game._moves[x] == address(0), "THIS_BOARD_IS_ALREADY_FILLED");
         _game._moves[x] = msg.sender;
+        emit MoveMade(_id, msg.sender, block.timestamp);
     }
 
     /*
