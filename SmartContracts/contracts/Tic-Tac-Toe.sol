@@ -7,7 +7,7 @@ pragma solidity ^0.8.7;
 => Game will start now and last for about maximum of 2 minutes.
 => Users will start making moves in patterns.
 => Whoever forfeits will lose all the money and the other person will win.
-=> If one user wins they win all the money and the owner of the contract gets 1% commission
+=> If one user wins they win all the money and the owner of the contract gets 10% commission
 */
 
 error NOT_ENOUGH_ETH();
@@ -16,11 +16,17 @@ error YOU_HAVE_ALREADY_JOINED();
 error GAME_NOT_STARTED_YET();
 error NOT_PLAYER();
 error MOVE_NOT_MADE();
+error ONLY_PLAYER_ONE_CAN_REFUND();
+error GAME_NOT_ACTIVE();
+
+// claimRefund if player two doesn't join
+// check for draw and pay the players back
+// check for forfeit conditions
 
 contract Tic_Tac_Toe {
     address owner;
 
-    uint256 public constant TIMEOUT = 5 minutes;
+    uint256 public constant TIMEOUT = 4 minutes;
     // Game Events here
     event NewGame(uint256 gameId, address creator, uint256 timestamp);
     event GameJoined(uint256 gameId, address joinee, uint256 timestamp);
@@ -88,6 +94,20 @@ contract Tic_Tac_Toe {
         _;
     }
 
+    modifier isGameActive(uint256 _id) {
+        if (games[_id].result != Result.active) {
+            revert GAME_NOT_ACTIVE();
+        }
+        _;
+    }
+
+    modifier onlyPlayerOne(uint256 _id) {
+        if (games[_id].player1 != msg.sender) {
+            revert ONLY_PLAYER_ONE_CAN_REFUND();
+        }
+        _;
+    }
+
     modifier isCalledByPlayer(uint256 _id) {
         if (
             msg.sender != games[_id].player1 && msg.sender != games[_id].player2
@@ -115,7 +135,14 @@ contract Tic_Tac_Toe {
     */
     function joinGame(
         uint256 _id
-    ) public payable enoughValue gameExists(_id) alreadyJoined(_id) {
+    )
+        public
+        payable
+        isGameActive(_id)
+        enoughValue
+        gameExists(_id)
+        alreadyJoined(_id)
+    {
         require(games[_id].player2 == address(0), "ALREADY_JOINED!!!");
         games[_id].player2 = msg.sender;
         games[_id].startingTime = block.timestamp;
@@ -161,6 +188,30 @@ contract Tic_Tac_Toe {
         _game.currentTurn = getNextPlayer(_game.currentTurn);
         // swap the positioning for other player to make a move
         emit MoveMade(_id, msg.sender, block.timestamp);
+    }
+
+    /*
+    @dev Claim refund if player2 doesn't join in 5 minutes
+    */
+    function claimRefund(
+        uint256 _id
+    )
+        external
+        isGameActive(_id)
+        gameExists(_id)
+        onlyPlayerOne(_id)
+        returns (bool success)
+    {
+        Game storage _game = games[_id];
+        require(
+            _game.player2 == address(0),
+            "Cannot claim refund player2 has joined!!!"
+        );
+        (bool refund, ) = msg.sender.call{value: _game.amountSent}("");
+        require(refund, "Failed to refund");
+        _game.result = Result.abandoned;
+        // timestamp here
+        return true;
     }
 
     /*
