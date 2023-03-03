@@ -51,6 +51,7 @@ contract Tic_Tac_Toe {
         uint256 startingTime;
         address winner;
         address[9] _moves;
+        uint256 amountSent;
         Turn currentTurn;
         Result result;
     }
@@ -104,6 +105,7 @@ contract Tic_Tac_Toe {
         game.player1 = msg.sender;
         game.currentTurn = Turn.player1;
         game.result = Result.active;
+        game.amountSent += msg.value;
         gameId += 1;
         emit NewGame(gameId - 1, msg.sender, block.timestamp);
     }
@@ -114,9 +116,10 @@ contract Tic_Tac_Toe {
     function joinGame(
         uint256 _id
     ) public payable enoughValue gameExists(_id) alreadyJoined(_id) {
-        // run a check to not allow player2 to join twice
+        require(games[_id].player2 == address(0), "ALREADY_JOINED!!!");
         games[_id].player2 = msg.sender;
         games[_id].startingTime = block.timestamp;
+        games[_id].amountSent += msg.value;
         emit GameJoined(_id, msg.sender, block.timestamp);
     }
 
@@ -131,7 +134,32 @@ contract Tic_Tac_Toe {
         require(msg.sender == getCurrentPlayer(_id), "NOT_YOUR_TURN");
         require(x <= 8, "INVALID_MOVE");
         require(_game._moves[x] == address(0), "THIS_BOARD_IS_ALREADY_FILLED");
-        _game._moves[x] = msg.sender;
+        require(_game.winner == address(0), "GAME_ALREADY_ENDED");
+        _game._moves[x] = getCurrentPlayer(_id);
+        if (checkRows(_id) || checkColumns(_id) || checkDiagonals(_id)) {
+            _game.winner = getCurrentPlayer(_id);
+            (bool sendCommission, ) = owner.call{value: getGameCommission(_id)}(
+                ""
+            );
+            require(sendCommission, "Failed to send game commission to owner");
+        }
+        if (_game.winner == _game.player1) {
+            _game.result = Result.player1Wins;
+            (bool rewardPlayerOne, ) = _game.player1.call{
+                value: getWinnerReward(_id)
+            }("");
+            require(rewardPlayerOne, "FAILED_TO_REWARD_PLAYER_ONE");
+        } else if (_game.winner == _game.player2) {
+            _game.result = Result.player2Wins;
+            (bool rewardPlayerTwo, ) = _game.player2.call{
+                value: getWinnerReward(_id)
+            }("");
+            require(rewardPlayerTwo, "FAILED_TO_REWARD_PLAYER_TWO");
+        } else {
+            _game.result = Result.draw;
+        }
+        _game.currentTurn = getNextPlayer(_game.currentTurn);
+        // swap the positioning for other player to make a move
         emit MoveMade(_id, msg.sender, block.timestamp);
     }
 
@@ -247,9 +275,25 @@ contract Tic_Tac_Toe {
     }
 
     /*
-    @dev Getter function to get the array from the struct
+    @dev Getter function to get game array from the struct
     */
     function getMoves(uint256 _id) public view returns (address[9] memory) {
         return games[_id]._moves;
     }
+
+    function getContractBalance() public view returns (uint256) {
+        return address(this).balance;
+    }
+
+    function getGameCommission(uint256 _id) public view returns (uint256) {
+        return (games[_id].amountSent / 100) * 10;
+    }
+
+    function getWinnerReward(uint256 _id) public view returns (uint256) {
+        return (games[_id].amountSent / 100) * 90;
+    }
+
+    receive() external payable {}
+
+    fallback() external payable {}
 }
