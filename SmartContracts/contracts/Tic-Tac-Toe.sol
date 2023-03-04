@@ -182,16 +182,24 @@ contract Tic_Tac_Toe {
                 value: getWinnerReward(_id)
             }("");
             require(rewardPlayerTwo, "FAILED_TO_REWARD_PLAYER_TWO");
-        } else {
+        }
+        if (checkDraw(_id) && _game.winner == address(0)) {
             _game.result = Result.draw;
+            (bool sendBackToPlayer1, ) = _game.player1.call{
+                value: _game.amountSent / 2
+            }("");
+            require(sendBackToPlayer1, "FAILED_TO_SEND_BACK");
+            (bool sendBackToPlayer2, ) = _game.player2.call{
+                value: _game.amountSent / 2
+            }("");
+            require(sendBackToPlayer2, "FAILED_TO_SEND_BACK");
         }
         _game.currentTurn = getNextPlayer(_game.currentTurn);
-        // swap the positioning for other player to make a move
         emit MoveMade(_id, msg.sender, block.timestamp);
     }
 
     /*
-    @dev Claim refund if player2 doesn't join in 5 minutes
+    @dev Claim refund if player2 doesn't join inside 5 minutes
     */
     function claimRefund(
         uint256 _id
@@ -292,6 +300,19 @@ contract Tic_Tac_Toe {
             return true;
         }
         return false;
+    }
+
+    /*
+    @dev Check for draw
+    */
+    function checkDraw(uint256 _id) public view returns (bool) {
+        Game storage _game = games[_id];
+        for (uint8 i = 0; i < _game._moves.length; i++) {
+            if (_game._moves[i] == address(0)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /*
