@@ -4,9 +4,10 @@ pragma solidity ^0.8.7;
 /*
 => User will enter the game by betting some Eth.
 => Second user will enter the game by betting the same amount.
-=> Game will start now and last for about maximum of 2 minutes.
+=> Game will start now and last for about a maximum of 7 minutes.
 => Users will start making moves in patterns.
-=> Whoever forfeits will lose all the money and the other person will win.
+=> Whoever forfeits will lose all the money and the other player will win.
+=> Any user that doesn't make a move inside 1 minute loses is considered forfeiting the game
 => If one user wins they win all the money and the owner of the contract gets 10% commission
 */
 
