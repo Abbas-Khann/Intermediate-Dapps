@@ -26,7 +26,7 @@ error GAME_NOT_ACTIVE();
 contract Tic_Tac_Toe {
     address owner;
 
-    uint256 public constant TIMEOUT = 4 minutes;
+    uint256 public constant TIMEOUT = 7 minutes;
     // Game Events here
     event NewGame(uint256 gameId, address creator, uint256 timestamp);
     event GameJoined(uint256 gameId, address joinee, uint256 timestamp);
@@ -58,6 +58,7 @@ contract Tic_Tac_Toe {
         address winner;
         address[9] _moves;
         uint256 amountSent;
+        mapping(address => uint256) hasCalled;
         Turn currentTurn;
         Result result;
     }
@@ -145,7 +146,7 @@ contract Tic_Tac_Toe {
     {
         require(games[_id].player2 == address(0), "ALREADY_JOINED!!!");
         games[_id].player2 = msg.sender;
-        games[_id].startingTime = block.timestamp;
+        games[_id].startingTime = block.timestamp + TIMEOUT;
         games[_id].amountSent += msg.value;
         emit GameJoined(_id, msg.sender, block.timestamp);
     }
@@ -194,8 +195,28 @@ contract Tic_Tac_Toe {
             }("");
             require(sendBackToPlayer2, "FAILED_TO_SEND_BACK");
         }
+        if (checkForfeit(_id)) {
+            (bool sent, ) = getNextPlayersAddress(_id).call{
+                value: _game.amountSent
+            }("");
+            require(sent, "FAILED_TO_REPAY");
+        }
+        _game.hasCalled[msg.sender] = block.timestamp;
         _game.currentTurn = getNextPlayer(_game.currentTurn);
         emit MoveMade(_id, msg.sender, block.timestamp);
+    }
+
+    /*
+    @dev Forfeiting functionality based off one minute of not making a move
+    */
+    function checkForfeit(uint256 _id) public view returns (bool) {
+        if (
+            block.timestamp - games[_id].hasCalled[games[_id].player1] <= 60 ||
+            block.timestamp - games[_id].hasCalled[games[_id].player2] <= 60
+        ) {
+            return true;
+        }
+        return false;
     }
 
     /*
@@ -339,6 +360,14 @@ contract Tic_Tac_Toe {
         } else revert("Err fetching next player");
     }
 
+    function getNextPlayersAddress(uint256 _id) public view returns (address) {
+        if (getCurrentPlayer(_id) == games[_id].player1) {
+            return games[_id].player2;
+        } else {
+            return games[_id].player1;
+        }
+    }
+
     /*
     @dev Return the gameId
     */
@@ -351,6 +380,13 @@ contract Tic_Tac_Toe {
     */
     function getMoves(uint256 _id) public view returns (address[9] memory) {
         return games[_id]._moves;
+    }
+
+    function getTimestamp(
+        uint256 _id,
+        address _addr
+    ) public view returns (uint256) {
+        return games[_id].hasCalled[_addr];
     }
 
     function getContractBalance() public view returns (uint256) {
