@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "@chainlink/contracts": "^0.5.1",
-    "@openzeppelin/contracts": "^4.8.1"
+    "@openzeppelin/contracts": "^4.8.1",
+    "@thirdweb-dev/contracts": "^3.4.3"
   }
 }
