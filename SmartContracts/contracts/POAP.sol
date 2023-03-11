@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "@thirdweb-dev/contracts/base/ERC1155Drop.sol";
+import "@thirdweb-dev/contracts/base/ERC1155SignatureMint.sol";
 
 /*
 Building a mintKudos clone contract as it will be released via Publish
@@ -11,7 +12,9 @@ Building a mintKudos clone contract as it will be released via Publish
 => Write tests FFS
 */
 
-contract MyNFT is ERC1155Drop {
+contract POAP is ERC1155Drop {
+    mapping(uint256 => address) public tokenOwner;
+
     constructor(
         string memory _name,
         string memory _symbol,
@@ -42,5 +45,27 @@ contract MyNFT is ERC1155Drop {
         super.safeTransferFrom(from, to, id, amount, data);
     }
 
-    // perform overriding for other functions next
+    function lazyMint(
+        uint256 _amount,
+        string calldata _baseURIForTokens,
+        bytes calldata _data
+    ) public virtual override returns (uint256 batchId) {
+        super.lazyMint(_amount, _baseURIForTokens, _data);
+        return LazyMint.lazyMint(_amount, _baseURIForTokens, _data);
+    }
+
+    // Perform overriding for other functions next
+    function _canSetClaimConditions()
+        internal
+        view
+        virtual
+        override
+        returns (bool)
+    {
+        return true;
+    }
+
+    function _canLazyMint() internal view virtual override returns (bool) {
+        return true;
+    }
 }
