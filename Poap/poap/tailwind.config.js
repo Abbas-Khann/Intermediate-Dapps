@@ -9,7 +9,7 @@ module.exports = {
     logs: true,
     rtl: false,
     prefix: "",
-    darkTheme: "forest",
+    darkTheme: "black",
   },
   content: ["./pages/**/*.tsx", "./components/**/*.tsx"],
   theme: {
