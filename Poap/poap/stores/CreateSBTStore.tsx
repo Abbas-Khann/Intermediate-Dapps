@@ -87,5 +87,3 @@ export const useCreateSBTStore = create<CreateSBTState>()((set) => ({
         })
     }
 }));
-
-
