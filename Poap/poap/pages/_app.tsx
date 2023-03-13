@@ -9,7 +9,7 @@ import { Mumbai } from "@thirdweb-dev/chains"
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <ThirdwebProvider 
+    <ThirdwebProvider
     activeChain={Mumbai}
     >
       <Component {...pageProps} />

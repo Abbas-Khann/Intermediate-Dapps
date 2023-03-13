@@ -3,7 +3,7 @@ import Header from "../components/Header";
 
 const Home: NextPage = () => {
   return (
-    <main className="">
+    <main>
       <Header />
     </main>
   );
