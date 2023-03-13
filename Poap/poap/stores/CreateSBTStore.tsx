@@ -16,6 +16,8 @@ interface CreateSBTState {
     setAmount: (amount: number) => void;
     setMaxClaimable: (maxClaimable: number) => void;
     setStartingDate: (startingDate: Date) => void;
+    setImage: (image: string) => void;
+    setImageFile: (file: File) => void;
     setAddresses: (address: string) => void;
     setForm: (form: SBTFORM) => void;
 }
@@ -67,6 +69,22 @@ export const useCreateSBTStore = create<CreateSBTState>()((set) => ({
             return {
                 ...state,
                 startingDate: startingDate
+            }
+        })
+    },
+    setImage(image) {
+        set((state) => {
+            return {
+                ...state,
+                image: image
+            }
+        })
+    },
+    setImageFile(file) {
+        set((state) => {
+            return {
+                ...state,
+                file: file
             }
         })
     },
