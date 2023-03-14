@@ -1,27 +1,71 @@
 import { utils } from "ethers";
 import React from "react";
 import { useCreateSBTStore } from "../stores/CreateSBTStore";
+import { useContract, useLazyMint, useSetClaimConditions, useStorageUpload } from "@thirdweb-dev/react";
+import { contractAddress } from "../constants/constants";
+import { NATIVE_TOKEN_ADDRESS } from "@thirdweb-dev/sdk";
 
 const CreateSBTForm = (): JSX.Element => {
   const createForm = useCreateSBTStore();
-
-  console.log(createForm);
-
+  const tokenId = 0;
+  const { contract } = useContract(contractAddress);
+  const { mutateAsync: lazyMint, isLoading, error } = useLazyMint(contract);
+  const { mutateAsync: setClaimCondition } = useSetClaimConditions(contract, tokenId);
+  const { mutateAsync: upload } = useStorageUpload();
+  const handleLazyMint = async () => {
+    await lazyMint({
+      metadatas: [
+        {
+          name: createForm.name,
+          description: createForm.description,
+          image: createForm.image
+        }
+      ]
+    });
+    const snapshotData = [];
+    for(let i = 0; i < createForm.addresses.length; i++) {
+      snapshotData.push({
+        address: createForm.addresses[i],
+        maxClaimable: 1
+      })
+    }
+    await setClaimCondition({
+      phases: [
+        {
+          metadata: {
+            name: "Phase",
+          },
+          currencyAddress: NATIVE_TOKEN_ADDRESS,
+          price: 0,
+          maxClaimablePerWallet: createForm.amount,
+          maxClaimableSupply: createForm.maxClaimable,
+          startTime: createForm.startingDate,
+          waitInSeconds: 60 * 60 * 24 * 7,
+          snapshot: snapshotData
+        }
+      ]
+    })
+    console.table("IT WORKED BITCHEZZZZZ");
+  }
+  
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || !e.target.files[0]) {
       throw new Error("Upload Image first!!!");
     }
 
-    const file = e.target.files[0];
+    const file = e.target.files![0];
     const fileSize = 2 * 1024 * 1024;
 
     if (file.size > fileSize) {
       throw new Error("File should be less than 2 MB's");
     }
 
-    const objectUrl = URL.createObjectURL(file);
-    createForm.setImage(objectUrl);
     createForm.setImageFile(file);
+    const uploadUrl = await upload({
+      data: [file],
+      options: { uploadWithGatewayUrl: true, uploadWithoutDirectory: true }
+    })
+    createForm.setImage(uploadUrl[0]);
   };
 
   // processCSV
@@ -68,6 +112,8 @@ const CreateSBTForm = (): JSX.Element => {
     reader.readAsText(csvFile);
     e.target.value = "";
   }
+
+  console.log(createForm)
 
   return (
     <div>
@@ -145,7 +191,9 @@ const CreateSBTForm = (): JSX.Element => {
               handleCSVUpload(e)
             }}
           />
-          <button>Submit</button>
+          <button
+          onClick={handleLazyMint}
+          >Submit</button>
         </div>
       </div>
     </div>
