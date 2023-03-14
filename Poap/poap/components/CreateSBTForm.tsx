@@ -7,26 +7,26 @@ import { NATIVE_TOKEN_ADDRESS } from "@thirdweb-dev/sdk";
 
 const CreateSBTForm = (): JSX.Element => {
   const createForm = useCreateSBTStore();
-  const tokenId = 0;
+  const tokenId = 11;
   const { contract } = useContract(contractAddress);
   const { mutateAsync: lazyMint, isLoading, error } = useLazyMint(contract);
   const { mutateAsync: setClaimCondition } = useSetClaimConditions(contract, tokenId);
   const { mutateAsync: upload } = useStorageUpload();
   const handleLazyMint = async () => {
-    await lazyMint({
-      metadatas: [
-        {
-          name: createForm.name,
-          description: createForm.description,
-          image: createForm.image
-        }
-      ]
-    });
+    // await lazyMint({
+    //   metadatas: [
+    //     {
+    //       name: createForm.name,
+    //       description: createForm.description,
+    //       image: createForm.image
+    //     }
+    //   ]
+    // });
     const snapshotData = [];
-    for(let i = 0; i < createForm.addresses.length; i++) {
+    for(let i = 1; i < createForm.addresses.length; i++) {
       snapshotData.push({
         address: createForm.addresses[i],
-        maxClaimable: 1
+        maxClaimable: 1,
       })
     }
     await setClaimCondition({
