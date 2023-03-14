@@ -1,25 +1,73 @@
-import React from "react";
+import { utils } from "ethers";
+import React, { HTMLInputTypeAttribute } from "react";
 import { useCreateSBTStore } from "../stores/CreateSBTStore";
 
 const CreateSBTForm = (): JSX.Element => {
-    const createForm = useCreateSBTStore();
+  const createForm = useCreateSBTStore();
 
-    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if(!e.target.files || !e.target.files[0]) {
-            throw new Error("Upload Image first!!!");
-        }
-        
-        const file = e.target.files[0];
-        const fileSize = 2 * 1024 * 1024;
+  console.log(createForm);
 
-        if(file.size > fileSize) {
-            throw new Error("File should be less than 2 MB's");
-        }
-
-        const objectUrl = URL.createObjectURL(file)
-        createForm.setImage(objectUrl);
-        createForm.setImageFile(file);
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || !e.target.files[0]) {
+      throw new Error("Upload Image first!!!");
     }
+
+    const file = e.target.files[0];
+    const fileSize = 2 * 1024 * 1024;
+
+    if (file.size > fileSize) {
+      throw new Error("File should be less than 2 MB's");
+    }
+
+    const objectUrl = URL.createObjectURL(file);
+    createForm.setImage(objectUrl);
+    createForm.setImageFile(file);
+  };
+
+  // processCSV
+  const processCSV = (str: string, delim = ",") => {
+    createForm.removeAddresses();
+    console.log(createForm.addresses)
+    let rows = str.split("\n");
+    console.log(rows)
+    if(rows[0] != "address") {
+        throw new Error("Add address to the top of the csv");
+    }
+    
+    rows.map((row) => {
+      row = row.replace("/r", "");
+      if(!utils.isAddress(row) && row != "address") {
+        createForm.removeAddresses();
+        throw new Error("Incorrect Address: "+ row);
+      }
+      else {
+        createForm.addAddress(row);
+      }
+    });
+  }
+
+  const handleCSVUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if(!e.target.files || !e.target.files[0]) {
+      throw new Error('No files uploaded');
+    }
+
+    const file = e.target.files![0];
+    const fileSize = 2 * 1024 * 1024;
+    console.log(fileSize)
+    if(file.size > fileSize) {
+      throw new Error("File size shouldn't exceed 2 MB's");
+    }
+    console.log("file.size", file.size)
+    const csvFile = file;
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      const text = e.target?.result;
+      processCSV(text as string);
+    }
+    reader.readAsText(csvFile);
+    e.target.value = "";
+  }
 
   return (
     <div>
@@ -63,8 +111,8 @@ const CreateSBTForm = (): JSX.Element => {
         <input
           onChange={(e) => {
             const dateValue = e.target.valueAsDate;
-            if(dateValue !== null) {
-                createForm.setStartingDate(dateValue)
+            if (dateValue !== null) {
+              createForm.setStartingDate(dateValue);
             }
           }}
           type="date"
@@ -72,6 +120,7 @@ const CreateSBTForm = (): JSX.Element => {
         />
         {/* Image file here */}
         <input
+          onChange={handleImageUpload}
           type="file"
           className="file-input file-input-bordered w-full max-w-xs"
         />
@@ -91,7 +140,10 @@ const CreateSBTForm = (): JSX.Element => {
             className="hidden"
             type="file"
             accept="text/csv"
-            onChange={(e) => {}}
+            onChange={(e) => {
+              e.preventDefault();
+              handleCSVUpload(e)
+            }}
           />
           <button>Submit</button>
         </div>

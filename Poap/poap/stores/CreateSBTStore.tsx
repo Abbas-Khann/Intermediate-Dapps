@@ -18,7 +18,8 @@ interface CreateSBTState {
     setStartingDate: (startingDate: Date) => void;
     setImage: (image: string) => void;
     setImageFile: (file: File) => void;
-    setAddresses: (address: string) => void;
+    addAddress: (address: string) => void;
+    removeAddresses: () => void;
     setForm: (form: SBTFORM) => void;
 }
 
@@ -88,11 +89,19 @@ export const useCreateSBTStore = create<CreateSBTState>()((set) => ({
             }
         })
     },
-    setAddresses(address) {
+    addAddress(address) {
         set((state) => {
             return {
                 ...state,
-                address: address
+                addresses: [...state.addresses, address]
+            }
+        })
+    },
+    removeAddresses() {
+        set((state) => {
+            return {
+                ...state,
+                addresses: []
             }
         })
     },
