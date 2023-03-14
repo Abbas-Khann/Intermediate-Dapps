@@ -1,5 +1,5 @@
 import { utils } from "ethers";
-import React, { HTMLInputTypeAttribute } from "react";
+import React from "react";
 import { useCreateSBTStore } from "../stores/CreateSBTStore";
 
 const CreateSBTForm = (): JSX.Element => {
