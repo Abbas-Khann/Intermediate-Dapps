@@ -1,27 +1,28 @@
 import { utils } from "ethers";
 import React from "react";
 import { useCreateSBTStore } from "../stores/CreateSBTStore";
-import { useContract, useLazyMint, useSetClaimConditions, useStorageUpload } from "@thirdweb-dev/react";
+import { useContract, useContractRead, useLazyMint, useSetClaimConditions, useStorageUpload } from "@thirdweb-dev/react";
 import { contractAddress } from "../constants/constants";
 import { NATIVE_TOKEN_ADDRESS } from "@thirdweb-dev/sdk";
 
 const CreateSBTForm = (): JSX.Element => {
   const createForm = useCreateSBTStore();
-  const tokenId = 11;
   const { contract } = useContract(contractAddress);
+  const { data: nextTokenToMint } = useContractRead(contract, "nextTokenIdToMint");
+  const tokenId = nextTokenToMint?.toNumber();
   const { mutateAsync: lazyMint, isLoading, error } = useLazyMint(contract);
   const { mutateAsync: setClaimCondition } = useSetClaimConditions(contract, tokenId);
   const { mutateAsync: upload } = useStorageUpload();
   const handleLazyMint = async () => {
-    // await lazyMint({
-    //   metadatas: [
-    //     {
-    //       name: createForm.name,
-    //       description: createForm.description,
-    //       image: createForm.image
-    //     }
-    //   ]
-    // });
+    await lazyMint({
+      metadatas: [
+        {
+          name: createForm.name,
+          description: createForm.description,
+          image: createForm.image
+        }
+      ]
+    });
     const snapshotData = [];
     for(let i = 1; i < createForm.addresses.length; i++) {
       snapshotData.push({
@@ -45,7 +46,6 @@ const CreateSBTForm = (): JSX.Element => {
         }
       ]
     })
-    console.table("IT WORKED BITCHEZZZZZ");
   }
   
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,8 +112,6 @@ const CreateSBTForm = (): JSX.Element => {
     reader.readAsText(csvFile);
     e.target.value = "";
   }
-
-  console.log(createForm)
 
   return (
     <div>
