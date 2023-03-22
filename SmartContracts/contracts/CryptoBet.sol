@@ -1,16 +1,14 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.9;
+pragma solidity ^0.8.9;
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
 contract CryptoBet {
-
     error NOT_ENOUGH_ETH_TO_PLAY_GAME();
     error NOT_OWNER();
     error GAME_PAUSED_OR_NOT_STARTED();
     error NOT_ENOUGH_ETH_TO_BET();
 
     event BetPlaced(address indexed better, Bet);
-
 
     address payable private immutable owner;
     uint256 private immutable entryAmount;
@@ -23,8 +21,8 @@ contract CryptoBet {
     address payable[] private highBetters;
     address payable[] private lowBetters;
     address payable[] private winners;
-    mapping (address => bool) public hasBetted;
-    mapping (address => uint256) public addressToAmountBetted;
+    mapping(address => bool) public hasBetted;
+    mapping(address => uint256) public addressToAmountBetted;
     enum Bet {
         HIGH, // Betters who will bet on the price being higher
         LOW // Low means users whom bet on the price being lower
@@ -43,11 +41,12 @@ contract CryptoBet {
             revert NOT_ENOUGH_ETH_TO_PLAY_GAME();
         }
     }
+
     /**
      * Returns the latest price
      */
     function getLatestPrice() public view returns (uint256) {
-        (,int price ,,,) = priceFeed.latestRoundData();
+        (, int price, , , ) = priceFeed.latestRoundData();
         return uint256(price) / 100000000;
     }
 
@@ -85,20 +84,12 @@ contract CryptoBet {
         _;
     }
 
-    function placeBet(
-        Bet _bet
-        )
-        external 
-        payable 
-        gameRunning
-        notEnough
-        {
+    function placeBet(Bet _bet) external payable gameRunning notEnough {
         require(!hasBetted[msg.sender], "ALREADY_BETTED");
         if (_bet == Bet.HIGH) {
             address payable highBetter = payable(msg.sender);
             highBetters.push(highBetter);
-        }
-        else if (_bet == Bet.LOW) {
+        } else if (_bet == Bet.LOW) {
             address payable lowBetter = payable(msg.sender);
             lowBetters.push(lowBetter);
         }
@@ -111,24 +102,26 @@ contract CryptoBet {
     function checkPrice() external {
         uint256 latestPrice = getLatestPrice();
         require(gameTime < block.timestamp, "TIME_NOT_EXCEEDED_YET");
-        if (startingPrice < latestPrice) { // 1200 ==> 1000 1200 < 1000 
+        if (startingPrice < latestPrice) {
+            // 1200 ==> 1000 1200 < 1000
             winners = lowBetters;
             // highBetters lose
             // lowBetters win
-        }
-        else {
+        } else {
             winners = highBetters;
             // highBetters win
             // lowBetters lose
         }
     }
 
-     function rewardWinners() external onlyOwner {
+    function rewardWinners() external onlyOwner {
         require(block.timestamp > gameTime, "TIME_NOT_EXCEEDED_YET");
         // evaluate the amount to send to each winner;
-            uint256 _amount = (address(this).balance * 90)/100;
+        uint256 _amount = (address(this).balance * 90) / 100;
         for (uint i = 0; i < winners.length; i++) {
-            (bool sent, ) = winners[i].call{ value: _amount/winners.length}("");
+            (bool sent, ) = winners[i].call{value: _amount / winners.length}(
+                ""
+            );
             require(sent, "FAILED_TO_REWARD_WINNERS");
         }
     }
@@ -136,13 +129,13 @@ contract CryptoBet {
     function withdraw() external onlyOwner {
         require(block.timestamp > gameTime, "TIME_NOT_EXCEEDED_YET");
         uint256 _amount = returnTenPercent();
-        (bool sent,) = owner.call{ value: _amount }("");
+        (bool sent, ) = owner.call{value: _amount}("");
         require(sent, "FAILED_TO_WITHDRAW");
     }
 
-    function returnTenPercent() public view returns(uint256) {
+    function returnTenPercent() public view returns (uint256) {
         unchecked {
-            uint256 _amount = address(this).balance / 100 * 10;
+            uint256 _amount = (address(this).balance / 100) * 10;
             return _amount;
         }
     }
@@ -151,7 +144,11 @@ contract CryptoBet {
         return address(this).balance;
     }
 
-    function returnHighBetters() public view returns (address payable[] memory) {
+    function returnHighBetters()
+        public
+        view
+        returns (address payable[] memory)
+    {
         return highBetters;
     }
 
@@ -180,5 +177,4 @@ contract CryptoBet {
 
     // Fallback function is called when msg.data is not empty
     fallback() external payable {}
-
 }

@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.9;
+pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+
 /*
 User will land on the website 
 
@@ -67,12 +68,12 @@ contract HatcheryDao is ERC20 {
         bool updated;
     }
 
-    mapping (address => bool) public hasJoined;
-    mapping (uint256 => Investor) public investor;
-    mapping (address => bool) public isInvestor;
-    mapping (uint256 => Founder) public founder;
-    mapping (address => bool) public isFounder;
-    mapping (uint256 => Startup) public startup;
+    mapping(address => bool) public hasJoined;
+    mapping(uint256 => Investor) public investor;
+    mapping(address => bool) public isInvestor;
+    mapping(uint256 => Founder) public founder;
+    mapping(address => bool) public isFounder;
+    mapping(uint256 => Startup) public startup;
 
     uint256 investorId;
     uint256 founderId;
@@ -81,26 +82,26 @@ contract HatcheryDao is ERC20 {
     address[] public DAO_Members;
 
     constructor(uint256 initialSupply) ERC20("HETCHToken", "HDT") {
-            _mint(address(this), initialSupply);
-            owner = msg.sender;
+        _mint(address(this), initialSupply);
+        owner = msg.sender;
     }
 
-    modifier onlyOwner {
+    modifier onlyOwner() {
         if (msg.sender != owner) {
             revert NOT_OWNER();
         }
         _;
     }
 
-    modifier enoughWallabyToJoin () {
-        if(msg.value <= 0.1 ether) {
+    modifier enoughWallabyToJoin() {
+        if (msg.value <= 0.1 ether) {
             revert("DAO_NOT_FOR_BROKIES");
         }
         _;
     }
 
     // Registration part
-    function joinDao() external payable enoughWallabyToJoin  {
+    function joinDao() external payable enoughWallabyToJoin {
         require(!hasJoined[msg.sender], "ALREADY_JOINED!!!");
         DAO_Members.push(msg.sender);
         hasJoined[msg.sender] = true;
@@ -112,12 +113,12 @@ contract HatcheryDao is ERC20 {
         string memory _name,
         string memory _description,
         address _companyWalletAddress
-    )
-    public 
-    payable 
-    {
+    ) public payable {
         require(hasJoined[msg.sender], "YOU_NEED_TO_JOIN_FIRST");
-        require(msg.value == 0.5 ether, "BROKE_BUMS_CAN'T_REGISTER_AS_FOUNDERS");
+        require(
+            msg.value == 0.5 ether,
+            "BROKE_BUMS_CAN'T_REGISTER_AS_FOUNDERS"
+        );
         Founder storage thisFounder = founder[founderId];
         thisFounder.name = _name;
         thisFounder.description = _description;
@@ -132,10 +133,7 @@ contract HatcheryDao is ERC20 {
         string memory _name,
         string memory _description,
         address _investorWalletAddress
-    )
-    public
-    payable
-    {
+    ) public payable {
         require(hasJoined[msg.sender], "YOU_NEED_TO_JOIN_DAO_FIRST");
         require(msg.value == 1 ether, "BROKE_SO_CALLED_INVESTORS_NOT_ALLOWED");
         Investor storage thisInvestor = investor[investorId];
@@ -146,57 +144,68 @@ contract HatcheryDao is ERC20 {
         isInvestor[msg.sender] = true;
         investorId++;
     }
-    
+
     // These two will make you eligible for certain function calls
     modifier enoughEth(uint256 _amount) {
-        if(_amount == 1) {
-            require(msg.value == 0.01 ether, "BROKE_BUMS_CAN'T_BUY_KHAN_TOKENS");
-        }
-        else if(_amount == 2) {
-            require(msg.value == 0.02 ether, "BROKE_BUMS_CAN'T_BUY_KHAN_TOKENS");
-        }
-        else if(_amount == 3) {
-            require(msg.value == 0.03 ether, "BROKE_BUMS_CAN'T_BUY_KHAN_TOKENS");
-        }
-        else if(_amount == 4) {
-            require(msg.value == 0.04 ether, "BROKE_BUMS_CAN'T_BUY_KHAN_TOKENS");
-        }
-        else if(_amount == 5) {
-            require(msg.value == 0.05 ether, "BROKE_BUMS_CAN'T_BUY_KHAN_TOKENS");
-        }
-        else if(_amount == 6) {
-            require(msg.value == 0.06 ether, "BROKE_BUMS_CAN'T_BUY_KHAN_TOKENS");
-        }
-        else if (_amount == 7) {
-            require(msg.value == 0.07 ether, "BROKE_BUMS_CAN'T_BUY_KHAN_TOKENS");
-        }
-        else if(_amount == 8) {
-            require(msg.value == 0.08 ether, "BROKE_BUMS_CAN'T_BUY_KHAN_TOKENS");
-        }
-        else if(_amount == 9) {
-            require(msg.value == 0.09 ether, "BROKE_BUMS_CAN'T_BUY_KHAN_TOKENS");
-        }
-        else if(_amount == 10) {
+        if (_amount == 1) {
+            require(
+                msg.value == 0.01 ether,
+                "BROKE_BUMS_CAN'T_BUY_KHAN_TOKENS"
+            );
+        } else if (_amount == 2) {
+            require(
+                msg.value == 0.02 ether,
+                "BROKE_BUMS_CAN'T_BUY_KHAN_TOKENS"
+            );
+        } else if (_amount == 3) {
+            require(
+                msg.value == 0.03 ether,
+                "BROKE_BUMS_CAN'T_BUY_KHAN_TOKENS"
+            );
+        } else if (_amount == 4) {
+            require(
+                msg.value == 0.04 ether,
+                "BROKE_BUMS_CAN'T_BUY_KHAN_TOKENS"
+            );
+        } else if (_amount == 5) {
+            require(
+                msg.value == 0.05 ether,
+                "BROKE_BUMS_CAN'T_BUY_KHAN_TOKENS"
+            );
+        } else if (_amount == 6) {
+            require(
+                msg.value == 0.06 ether,
+                "BROKE_BUMS_CAN'T_BUY_KHAN_TOKENS"
+            );
+        } else if (_amount == 7) {
+            require(
+                msg.value == 0.07 ether,
+                "BROKE_BUMS_CAN'T_BUY_KHAN_TOKENS"
+            );
+        } else if (_amount == 8) {
+            require(
+                msg.value == 0.08 ether,
+                "BROKE_BUMS_CAN'T_BUY_KHAN_TOKENS"
+            );
+        } else if (_amount == 9) {
+            require(
+                msg.value == 0.09 ether,
+                "BROKE_BUMS_CAN'T_BUY_KHAN_TOKENS"
+            );
+        } else if (_amount == 10) {
             require(msg.value == 0.1 ether, "BROKE_BUMS_CAN'T_BUY_KHAN_TOKENS");
-        }
-        else {
+        } else {
             revert("CAN'T BUY MORE THAN 10 TOKENS");
         }
         _;
     }
 
-    function claimTokens(uint256 _amount)
-    public
-    payable
-    enoughEth(_amount)
-    {
-        if(isInvestor[msg.sender] == true) {
+    function claimTokens(uint256 _amount) public payable enoughEth(_amount) {
+        if (isInvestor[msg.sender] == true) {
             _transfer(address(this), msg.sender, _amount);
-        }
-        else if (isFounder[msg.sender] == true) {
+        } else if (isFounder[msg.sender] == true) {
             _transfer(address(this), msg.sender, _amount);
-        }
-        else {
+        } else {
             revert("YOU_ARE_NOT_ELIGIBLE_TO_CLAIM");
         }
         emit Claimed(msg.sender, _amount);
@@ -215,11 +224,11 @@ contract HatcheryDao is ERC20 {
         address _nativeToken,
         string memory _videoHash,
         uint256 _valuation
-    )
-    external 
-    onlyFounders
-    {
-        require(balanceOf(msg.sender) >= 2, "ATLEAST_TWO_TOKENS_REQUIRED_TO_POST");
+    ) external onlyFounders {
+        require(
+            balanceOf(msg.sender) >= 2,
+            "ATLEAST_TWO_TOKENS_REQUIRED_TO_POST"
+        );
         Startup storage thisStartup = startup[startupId];
         thisStartup.name = _name;
         thisStartup.description = _description;
@@ -238,10 +247,7 @@ contract HatcheryDao is ERC20 {
         address _nativeToken,
         string memory _videoHash,
         uint256 _valuation
-    )
-    external
-    onlyFounders
-    {
+    ) external onlyFounders {
         Startup storage thisStartup = startup[_id];
         require(!thisStartup.updated, "DATA_ALREADY_UPDATED_ONCE");
         thisStartup.name = _name;
@@ -253,29 +259,28 @@ contract HatcheryDao is ERC20 {
         emit Updated(_id, thisStartup.updated);
     }
 
-
-
-    function mint(uint256 _amount) onlyOwner external {
+    function mint(uint256 _amount) external onlyOwner {
         _mint(address(this), _amount);
     }
+
     // after registration they can create if they have a certain amount of balance
-    function getContractBalance() public view returns(uint256) {
+    function getContractBalance() public view returns (uint256) {
         return address(this).balance;
     }
 
-    function getInvestorId() public view returns(uint256) {
+    function getInvestorId() public view returns (uint256) {
         return investorId;
     }
 
-    function getFounderId() public view returns(uint256) {
+    function getFounderId() public view returns (uint256) {
         return founderId;
     }
 
-    function getStartupId() public view returns(uint256) {
+    function getStartupId() public view returns (uint256) {
         return startupId;
     }
 
-    function getOwner() public view returns(address) {
+    function getOwner() public view returns (address) {
         return owner;
     }
 
