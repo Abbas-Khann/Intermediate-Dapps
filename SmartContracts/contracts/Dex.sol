@@ -23,9 +23,19 @@ contract DEX is ERC20Base {
     }
 
     /*
+    @dev modifier to check if the amount sent is 0
+    */
+    modifier enoughAmount() {
+        require(msg.value != 0, "amount sent should be greater than 0");
+        _;
+    }
+
+    /*
     @dev Adds liquidity to the exchange
     */
-    function addLiquidity(uint256 _amount) public payable returns (uint256) {
+    function addLiquidity(
+        uint256 _amount
+    ) public payable enoughAmount returns (uint256) {
         uint256 liquidity;
         uint256 ethBalance = address(this).balance;
         uint256 tokenReserve = getReserve();
@@ -75,5 +85,24 @@ contract DEX is ERC20Base {
             _mint(msg.sender, liquidity);
         }
         return liquidity;
+    }
+
+    /*
+    @dev Returns the amount Eth/Custom tokens that would be returned to the user in the swap
+    */
+
+    function removeLiquidity(
+        uint256 _amount
+    ) public returns (uint256, uint256) {
+        require(_amount > 0, "Amount should be greater than zero");
+        uint256 ethReserve = address(this).balance;
+        uint256 _totalSupply = totalSupply();
+
+        uint256 ethAmount = (ethReserve * _amount) / _totalSupply;
+        uint256 tokenAmount = (getReserve() * _amount) / _totalSupply;
+        _burn(msg.sender, _amount);
+        payable(msg.sender).transfer(ethAmount);
+        ERC20Base(token).transfer(msg.sender, tokenAmount);
+        return (ethAmount, tokenAmount);
     }
 }
