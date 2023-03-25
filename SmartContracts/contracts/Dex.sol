@@ -89,6 +89,7 @@ contract DEX is ERC20Base {
 
     /*
     @dev Returns the amount Eth/Custom tokens that would be returned to the user in the swap
+    It removes Liquidity from the contract and gives the user their eth/custom token
     */
 
     function removeLiquidity(
@@ -97,9 +98,11 @@ contract DEX is ERC20Base {
         require(_amount > 0, "Amount should be greater than zero");
         uint256 ethReserve = address(this).balance;
         uint256 _totalSupply = totalSupply();
-
+        // To calculate ethAmount we will multiply the reservedEth in the contract and multiply by the amount sent. divided by the totalSupply
         uint256 ethAmount = (ethReserve * _amount) / _totalSupply;
+        // To calculate the tokenAmount we will get the reserve in the contract, multiply it by the amount sent and divide that with the totalSupply
         uint256 tokenAmount = (getReserve() * _amount) / _totalSupply;
+        // After that we can perform the burn function and
         _burn(msg.sender, _amount);
         payable(msg.sender).transfer(ethAmount);
         ERC20Base(token).transfer(msg.sender, tokenAmount);
