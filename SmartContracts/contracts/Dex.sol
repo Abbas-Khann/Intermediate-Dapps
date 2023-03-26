@@ -108,4 +108,20 @@ contract DEX is ERC20Base {
         ERC20Base(token).transfer(msg.sender, tokenAmount);
         return (ethAmount, tokenAmount);
     }
+
+    /*
+    @dev Returns the amount Eth/token that would be returned to the user in the swap
+    */
+
+    function getTokenAmount(
+        uint256 inputAmount,
+        uint256 inputReserve,
+        uint256 outputReserve
+    ) public pure returns (uint256) {
+        require(inputReserve > 0 && outputReserve > 0, "Invalid reserves");
+        uint256 inputAmountWithFee = inputAmount * 99;
+        uint256 numerator = inputAmountWithFee * outputReserve;
+        uint256 denominator = (inputReserve * 100) + inputAmountWithFee;
+        return numerator / denominator;
+    }
 }
