@@ -124,4 +124,36 @@ contract DEX is ERC20Base {
         uint256 denominator = (inputReserve * 100) + inputAmountWithFee;
         return numerator / denominator;
     }
+
+    /*
+    @dev Swap ether for token
+    */
+
+    function swapEtherForToken(uint256 _minTokens) public payable {
+        uint256 tokenReserve = getReserve();
+        uint256 tokensBought = getTokenAmount(
+            msg.value,
+            address(this).balance - msg.value,
+            tokenReserve
+        );
+        require(tokensBought >= _minTokens, "Insufficient output amount");
+        ERC20Base(token).transfer(msg.sender, tokensBought);
+    }
+
+    /*
+    @dev Swap token for Ether
+    */
+    function swapTokenForEther(uint256 _tokensSold, uint256 _minEther) public {
+        uint256 tokenReserve = getReserve();
+
+        uint256 ethBought = getTokenAmount(
+            _tokensSold,
+            tokenReserve,
+            address(this).balance
+        );
+        require(ethBought >= _minEther, "Insufficient output amount");
+        // Transfer token from user's address to the contract
+        ERC20Base(token).transferFrom(msg.sender, address(this), _tokensSold);
+        payable(msg.sender).transfer(ethBought);
+    }
 }
