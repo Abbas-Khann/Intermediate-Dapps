@@ -6,11 +6,7 @@ import "@thirdweb-dev/contracts/base/ERC20Base.sol";
 contract DEX is ERC20Base {
     address public token;
 
-    constructor(
-        string memory _name,
-        string memory _symbol,
-        address _token
-    ) ERC20Base(_name, _symbol) {
+    constructor(address _token) ERC20Base(name(), symbol()) {
         require(_token != address(0), "Not a valid ERC20 token address");
         token = _token;
     }
@@ -48,7 +44,7 @@ contract DEX is ERC20Base {
         if (tokenReserve == 0) {
             _token.transferFrom(msg.sender, address(this), _amount);
             liquidity = ethBalance;
-            _mint(msg.sender, liquidity);
+            mintTo(msg.sender, liquidity);
         } else {
             /*
             If the reserve is not empty, intake any user supplied value for `Ether` and
@@ -70,7 +66,7 @@ contract DEX is ERC20Base {
             ethReserve = 5 ether in the contract
             In this case: tokenAmount = (1 ether * 10)/(5 ether) // remember that the value will be in wei for calculation
            */
-            uint256 tokenAmount = (msg.value - tokenReserve) / (ethReserve);
+            uint256 tokenAmount = (msg.value * tokenReserve) / (ethReserve);
             require(
                 _amount >= tokenAmount,
                 "Amount sent is less than tokens required"
@@ -82,7 +78,7 @@ contract DEX is ERC20Base {
             by some maths -> liquidity =  (totalSupply of LP tokens in contract * (Eth sent by the user))/(Eth reserve in the contract)
            */
             liquidity = (totalSupply() * msg.value) / ethReserve;
-            _mint(msg.sender, liquidity);
+            mintTo(msg.sender, liquidity);
         }
         return liquidity;
     }
