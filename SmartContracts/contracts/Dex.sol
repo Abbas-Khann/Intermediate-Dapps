@@ -152,4 +152,8 @@ contract DEX is ERC20Base {
         ERC20Base(token).transferFrom(msg.sender, address(this), _tokensSold);
         payable(msg.sender).transfer(ethBought);
     }
+
+    receive() external payable {}
+
+    fallback() external payable {}
 }
