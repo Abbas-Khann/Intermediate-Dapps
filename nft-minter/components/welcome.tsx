@@ -37,7 +37,7 @@ const Welcome: React.FC = () => {
         <Image
           src="/NFT.png"
           width={400}
-          height={320}
+          height={200}
           alt="Cat Attack"
         />
       </div>
