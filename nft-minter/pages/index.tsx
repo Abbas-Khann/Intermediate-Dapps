@@ -4,7 +4,6 @@ import {
 import type { NextPage } from "next";
 import Header from "../components/header";
 import Welcome from "../components/welcome";
-import { CONTRACT_ADDR } from "../utils/constants";
 import { Spinner } from "../components/Spinner/Spinner";
 
 const Home: NextPage = () => {

@@ -1,7 +1,24 @@
-import { Web3Button } from "@thirdweb-dev/react";
+import { Web3Button, useAddress, useContract } from "@thirdweb-dev/react";
+import { ethers } from "ethers";
 import Image from "next/image";
+import { CONTRACT_ADDR } from "../utils/constants";
 
 const Welcome: React.FC = () => {
+  const address = useAddress();
+  const { contract } = useContract(CONTRACT_ADDR);
+
+  const mintNFT = async () => {
+    const isFreeMintAllowed = await contract?.call("allowedFreeMintAddresses", address);
+    const getMintPrice = await contract?.call("mintPrice");
+    const convertToEther = ethers.utils.formatEther(getMintPrice.toString());
+    if(isFreeMintAllowed) {
+      await contract?.call("mintNFT", address);
+    }
+      await contract?.call("mintNFT", address, {
+        value: ethers.utils.parseUnits(convertToEther)
+      });
+  }
+
   return (
     <div className="flex flex-col items-center w-full space-y-8">
       <h1 className="font-bold sm:text-6xl text-4xl leading-none text-center tracking-tight">
@@ -26,8 +43,8 @@ const Welcome: React.FC = () => {
       </div>
       <div className="max-w-xs">
         <Web3Button
-        contractAddress="0xbC044bc063F4F88e9d52D833c200aE05Ea65FAF9"
-        action={(contract) => contract.erc721.claim(1)}
+        contractAddress={CONTRACT_ADDR}
+        action={mintNFT}
         >
           Claim NFT
         </Web3Button>
